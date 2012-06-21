@@ -1,0 +1,5 @@
+com.rayrobdod.imageManipulator.operations.Identity
+com.rayrobdod.imageManipulator.operations.Transparentify
+com.rayrobdod.imageManipulator.operations.ChangeColor
+com.rayrobdod.imageManipulator.operations.Rescale
+com.rayrobdod.imageManipulator.operations.TwoTone

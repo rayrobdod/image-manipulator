@@ -1,0 +1,10 @@
+﻿imageManipulator
+
+== 1.0.0 ==
+First released version
+
+‣ Identity
+‣ Transparentify - may want to choose a color rather than always top-left color
+‣ ChangeColor
+‣ Rescale - may want inputs for min/max values rather than always 0/255
+‣ TwoTone

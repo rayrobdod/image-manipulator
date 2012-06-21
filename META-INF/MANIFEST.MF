@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Main-Class: com.rayrobdod.imageManipulator.main.Main
+
+
+
+
+
+
+
+
+
+
+
+

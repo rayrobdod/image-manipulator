@@ -24,38 +24,29 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+package com.rayrobdod.imageManipulator.main;
 
-package com.rayrobdod.imageManipulator.operations
-
-import com.rayrobdod.imageManipulator.Operation
-import java.awt.image.{BufferedImage, BufferedImageOp}
+import com.rayrobdod.imageManipulator.ImageManipulateFrame;
+import javax.swing.JFrame;
 
 /**
- * An identity image manipulation
+ * A main method for the image manipulator program
+ * 
  * @author Raymond Dodge
  * @version 2012 Jun 18
- * @version 2012 Jun 19 - moved from com.rayrobdod.imageManipulator.manipulations to com.rayrobdod.imageManipulator.operations
+ * @version 2012 Sept 08 - transcribed directly from scala with no changes
+ * @version 2012 Sept 09 - remakring as public. 
  */
-final class Identity extends Operation with NoResizeBufferedImageOp 
+public class Main
 {
-	override val name = "Identity"
+	private Main() {}
 	
-	override def setup(panel:javax.swing.JPanel,
-				actionListener:java.awt.event.ActionListener):Any = {}
-	
-	override def apply(inputImage:BufferedImage):BufferedImage = filter(inputImage, null)
-	
-	def filter(src:BufferedImage, x:BufferedImage) = {
-		val dst = Option(x).getOrElse(createCompatibleDestImage(src, null))
-		if (!(dst.getWidth == src.getWidth && src.getHeight == dst.getHeight)) throw new IllegalArgumentException
-		
-		(0 until src.getWidth).foreach{(x:Int) => 
-		(0 until src.getHeight).foreach{(y:Int) =>
-			dst.setRGB(x, y, src.getRGB(x, y))
-		}}
-		
-		dst
+	public static final void main(String[] args)
+	{
+		JFrame frame = new ImageManipulateFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.pack();
+		frame.setLocationByPlatform(true);
+		frame.setVisible(true);
 	}
-	
-	def getRenderingHints() = null
 }

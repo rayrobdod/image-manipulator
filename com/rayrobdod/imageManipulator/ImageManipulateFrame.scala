@@ -38,6 +38,8 @@ import java.awt.image.BufferedImage.{TYPE_INT_ARGB => alpha}
  * 
  * @author Raymond Dodge
  * @version 2012 Jun 18-19
+ * @version 2012 Sept 09 - added 16x16 image icon to frame
+ * @todo make preview operations work on scaled instances
  */
 class ImageManipulateFrame extends JFrame
 {
@@ -130,4 +132,5 @@ class ImageManipulateFrame extends JFrame
 	add(modeCustomArea, GridBagConstraintsRemainder)
 	
 	setTitle("Image Manipulator")
+	setIconImage(javax.imageio.ImageIO.read(this.getClass.getResource("frameIcon.png")))
 }

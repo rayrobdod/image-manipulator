@@ -1,0 +1,201 @@
+<project name="ImageManipulator" default="jars" basedir="C:/Users/Raymond/Documents/Programming/Java">
+	<description />
+	
+	<property name="classfiles" value="**/*.class META-INF/** releaseNotes.txt rayrobdod?license.txt **/*.png" />
+	<property name="sourcefiles" value="**/*.java **/*.scala build.xml *.proguard" />
+	
+	<property name="tmp" value="C:/Users/Raymond/AppData/Local/Temp" />
+	<property name="scala-lib" location="C:/Program Files/Scala/scala-2.9.1.final/lib/scala-library.jar" />
+	<property name="scala-comp" location="C:/Program Files/Scala/scala-2.9.1.final/lib/scala-compiler.jar" />
+	<!-- property name="anonFunReduce" value="-Xplugin:C:/Users/Raymond/Documents/Programming/Java/ScalaParserPlugin/CommonAnonFuns.zip" / -->
+	<property name="anonFunReduce" value="" />
+	
+	<property name="version" value="1.0.1" />
+	<!-- property name="myClasses" location="classes" / -->
+	<property name="jarNamePattern" location="C:/Users/Raymond/Documents/website/programming/java/programs/imageManipulator/${version}/imageManipulator-${version}-" />
+	
+	<property name="myClasses" location="${tmp}/antBuild/classes/" />
+	<!-- property name="jarNamePattern" value="${tmp}/antBuild/jars/" / -->
+	
+	<path id="myClasspath">
+		<pathelement location="${scala-lib}" />
+		<pathelement location="${myClasses}"/>
+		<pathelement location="C:/Users/Raymond/Documents/Programming/Java/Imported JAR Files/jna-3.4.0.jar"/>
+		<pathelement location="C:/Users/Raymond/Documents/Programming/Java/Imported JAR Files/jna-platform-3.4.1.jar"/>
+	</path>
+	
+	<target name="init" >
+		<!-- set up scala commands -->
+		<taskdef resource="scala/tools/ant/antlib.xml">
+			<classpath>
+				<pathelement location="${scala-comp}"   />
+				<pathelement location="${scala-lib}"   />
+			</classpath>
+		</taskdef>
+		
+		<!-- set up pack200 commands -->
+		<!-- taskdef name="p200ant"
+				classname="de.matthiasmann.p200ant.P200AntTask"
+				classpath="C:\Users\Raymond\Documents\Programming\Java\Imported JAR Files\p200ant.jar" / -->
+		<taskdef name="pack200"
+				classname="de.matthiasmann.p200ant.P200AntTask"		
+				classpath="classes" />
+		
+		<!-- set up proguard command -->
+		<taskdef resource="proguard/ant/task.properties"
+			classpath="C:\Users\Raymond\Downloads\proguard4.8\lib\proguard.jar" />
+		
+		<!-- create desitination directory -->
+		<mkdir dir="${myClasses}"/>
+	</target>
+	
+	<!-- making classes -->
+	<target name="class-imageManipulator" description="compile the meat classes" depends="class-utilities,init" >
+		<scalac destdir="${myClasses}" srcdir="Image Manipulator" classpathref="myClasspath" encoding="UTF-8" addparams="${anonFunReduce}">
+			<include name="**/*.scala" />
+		</scalac>
+		<javac destdir="${myClasses}" srcdir="Image Manipulator"
+					classpathref="myClasspath" encoding="UTF-8"
+					includeAntRuntime="false">
+			<include name="**/*.java" />
+		</javac>
+		<copy todir="${myClasses}" >
+			<fileset dir="Image Manipulator">
+				<exclude name="**/*.proguard"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="class-utilities" description="compile helper files" depends="init" >
+		<scalac destdir="${myClasses}" sourcepath="Utilities"
+					srcdir="Utilities" classpathref="myClasspath"
+					encoding="UTF-8" addparams="${anonFunReduce}" >
+			<include name="com/rayrobdod/swing/ScalaSeqListModel.scala" />
+		</scalac>
+		<javac destdir="${myClasses}" sourcepath="Utilities"
+				srcdir="Utilities" classpathref="myClasspath"
+				encoding="UTF-8" includeAntRuntime="false">
+			<include name="com/rayrobdod/util/Win7Taskbar.java" />
+		</javac>
+		
+		<copy todir="${myClasses}" >
+			<fileset dir="Utilities">
+				<include name="com/rayrobdod/swing/ScalaSeqListModel.scala" />
+				<include name="com/rayrobdod/util/Win7Taskbar.java" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<!-- scalac doesn't seem to have same classpath as default 
+		Also, as of now, trading 2 anonfuns for 6+ commonfuns. Not a good deal.
+	>
+	<target name="class-anonFunReduce" description="compile the commonAnonFuns" depends="init" >
+		<property name="anonFunReduce.src" location="C:\Users\Raymond\Documents\Programming\Java\ScalaParserPlugin\" />
+		
+		<scalac destdir="${myClasses}" sourcepath="${anonFunReduce.src}"
+					srcdir="${anonFunReduce.src}" classpathref="myClasspath" classpath="${scala-comp}"
+					encoding="UTF-8" >
+			<include name="CommonAnonFuns.scala" />
+		</scalac>
+	</target> <! -->
+	
+	<target name="classes" depends="class-imageManipulator,class-utilities" />
+	<!-- end making classes -->
+	
+	
+	<!-- making jars -->
+	<target name="jar-full.orig" depends="classes" description="creates a jar with just the original classes" >
+		<jar destfile="${jarNamePattern}full-orig.jar" update="false"
+					manifest="Image Manipulator/META-INF/MANIFEST.MF" >
+			<fileset dir="${myClasses}" includes="${classfiles}" />
+			<manifest>
+				<!-- attribute name="Class-Path" value="&quot;${scala-lib}&quot;"/ -->
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="jar-full.orig.src" depends="classes" description="creates a jar with just the original classes, and includes the sources" >
+		<jar destfile="${jarNamePattern}full-orig-src.jar" update="false"
+					manifest="Image Manipulator/META-INF/MANIFEST.MF" >
+			<fileset dir="${myClasses}" includes="${classfiles} ${sourcefiles}" />
+			<manifest>
+				<!-- attribute name="Class-Path" value="&quot;${scala-lib}&quot;"/ -->
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="jar-full.full" depends="classes" description="creates a jar with all the classes" >
+		<jar destfile="${jarNamePattern}full-full.jar" update="false"
+					manifest="Image Manipulator/META-INF/MANIFEST.MF" >
+			<fileset dir="${myClasses}" includes="${classfiles} scala?license.txt" />
+			<zipfileset src="${scala-lib}" includes="**/*.class" />
+		</jar>
+	</target>
+	
+	<target name="jar-mini.full" depends="jar-full.full" description="creates a jar with neccessary classes" >
+		<proguard configuration="Image Manipulator\mini-full.proguard">
+			-injars '${jarNamePattern}full-full.jar'
+			-outjars '${jarNamePattern}mini-full.jar'
+		</proguard>
+		<pack200 srcfile="${jarNamePattern}mini-full.jar" repack="true" unkownAttribute="strip" />
+	</target>
+	
+	<target name="jar-micro.full" depends="jar-full.full"
+				description="creates a jar with neccessary classes and names changed" >
+		<proguard configuration="Image Manipulator\micro-full.proguard">
+			-injars '${jarNamePattern}full-full.jar'
+			-outjars '${jarNamePattern}micro-full.jar'
+		</proguard>
+		<pack200 srcfile="${jarNamePattern}micro-full.jar" repack="true" unkownAttribute="strip" />
+	</target>
+	
+	<target name="jars" depends="jar-full.orig.src,jar-full.orig,jar-full.full,jar-mini.full,jar-micro.full" 
+			description="build all jar files" />
+	
+	<target name="jars-forked" description="run jars, but for the file so that there won't be memory problems" >
+		<java
+				classname="org.apache.tools.ant.launch.Launcher"
+				fork="true"
+				failonerror="true"
+				dir="Image Manipulator"
+				timeout="4000000"
+				taskname="forkAnt"
+		>
+			<classpath>
+				<pathelement location="${ant.home}/../ant-launcher.jar"/>
+				<pathelement location="${ant.home}/../ant.jar"/>
+				<pathelement location="C:\Program Files (x86)\Java\jdk1.7.0_07\lib\tools.jar"/>
+			</classpath>
+			<arg value="jars"/>
+		</java>
+	</target>
+	<!-- end making jars -->
+	
+	
+	<!-- making packs -->
+	<target name="pack" depends="jar-full.orig,jar-full.full" description="pack processing on the jar file">
+		<copy file="${jarNamePattern}full-full.jar" tofile="${jarNamePattern}full-full-nodebug.jar" />
+		<copy file="${jarNamePattern}full-orig.jar" tofile="${jarNamePattern}full-orig-nodebug.jar" />
+		<pack200 srcfile="${jarNamePattern}full-orig-nodebug.jar" repack="true" unkownAttribute="strip" />
+		<pack200 srcfile="${jarNamePattern}full-full-nodebug.jar" repack="true" unkownAttribute="strip" />
+		
+		<pack200 srcfile="${jarNamePattern}full-orig.jar" effort="9" />
+		<pack200 srcfile="${jarNamePattern}full-full.jar" effort="9" />
+		<pack200 srcfile="${jarNamePattern}full-orig-nodebug.jar" effort="9" />
+		<pack200 srcfile="${jarNamePattern}full-full-nodebug.jar" effort="9" />
+		
+		<property name="externalIncludes" value="C:\Users\Raymond\Documents\website\programming\java\externalIncludes\" />
+		<copy file="${scala-lib}" tofile="${externalIncludes}/scala-library_9-2.jar" />
+		<pack200 srcfile="${externalIncludes}/scala-library_9-2.jar" repack="true" unkownAttribute="strip" />
+		<pack200 srcfile="${externalIncludes}/scala-library_9-2.jar" effort="9" />
+	</target>
+	<!-- end making packs -->
+	
+	
+	<!-- clean -->
+	<target name="clean" description="remove built files">
+		<!-- remove contents of myClasses, but leave myClasses behind -->
+		<delete dir="${myClasses}"/>
+		<mkdir dir="${myClasses}"/>
+	</target>
+</project>

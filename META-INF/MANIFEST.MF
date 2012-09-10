@@ -1,14 +1,8 @@
 Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.8.2
+Created-By: 1.7.0_07-b10 (Oracle Corporation)
 Main-Class: com.rayrobdod.imageManipulator.main.Main
-
-
-
-
-
-
-
-
-
-
-
+Implementation-Vendor: Raymond Dodge
+Implementation-Title: Image Manipulator
+Implementation-Version: 1.0.1
 

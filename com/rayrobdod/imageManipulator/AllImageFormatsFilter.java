@@ -25,37 +25,23 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package com.rayrobdod.imageManipulator.operations
+package com.rayrobdod.imageManipulator;
 
-import com.rayrobdod.imageManipulator.Operation
-import java.awt.image.{BufferedImage, BufferedImageOp}
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.imageio.ImageIO;
 
 /**
- * An identity image manipulation
+ * A singleton that create a FileFilter that matches all files readable by ImageIO
+ * 
  * @author Raymond Dodge
- * @version 2012 Jun 18
- * @version 2012 Jun 19 - moved from com.rayrobdod.imageManipulator.manipulations to com.rayrobdod.imageManipulator.operations
+ * @version 2012 Aug 16
  */
-final class Identity extends Operation with NoResizeBufferedImageOp 
+public class AllImageFormatsFilter
 {
-	override val name = "Identity"
+	private AllImageFormatsFilter() {}
+	private static FileFilter item = new FileNameExtensionFilter(
+			"All Image Formats", ImageIO.getReaderFileSuffixes()); 
 	
-	override def setup(panel:javax.swing.JPanel,
-				actionListener:java.awt.event.ActionListener):Any = {}
-	
-	override def apply(inputImage:BufferedImage):BufferedImage = filter(inputImage, null)
-	
-	def filter(src:BufferedImage, x:BufferedImage) = {
-		val dst = Option(x).getOrElse(createCompatibleDestImage(src, null))
-		if (!(dst.getWidth == src.getWidth && src.getHeight == dst.getHeight)) throw new IllegalArgumentException
-		
-		(0 until src.getWidth).foreach{(x:Int) => 
-		(0 until src.getHeight).foreach{(y:Int) =>
-			dst.setRGB(x, y, src.getRGB(x, y))
-		}}
-		
-		dst
-	}
-	
-	def getRenderingHints() = null
+	public static FileFilter item() {return item;}
 }

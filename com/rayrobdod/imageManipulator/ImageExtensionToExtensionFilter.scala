@@ -26,37 +26,47 @@
 */
 
 package com.rayrobdod.imageManipulator
-package main
 
-import javax.swing.JFrame
-          
-/**
- * A main method 
- * 
- * @author Raymond Dodge
- * @version 2012 Jun 18
- */
-object Main extends App
-{
-	val frame = new ImageManipulateFrame()
-	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	frame.pack();
-	frame.setLocationByPlatform(true);
-	frame.setVisible(true);
+import javax.imageio.ImageIO
+import javax.imageio.ImageIO.{getReaderFileSuffixes => readerSuffixes,
+			getReaderMIMETypes => readerMime,
+			getReaderFormatNames => readerFormats
 }
-          
+import javax.swing.filechooser.{FileNameExtensionFilter, FileFilter}
+
 /**
- * A main function with some Windows7 specfic methods
- * 
- * Because SerProcessAppID is the only one I've figured out, that's the only operation this does.
+ * A function that creates a File Filter for the specified file extension
  * 
  * @author Raymond Dodge
- * @version 2012 Jun 19
+ * @version 2012 Aug 16
  */
-object Win7Main extends App
+object ImageExtensionToExtensionFilter extends Function1[String, Option[FileFilter]]
 {
-	import com.rayrobdod.util.Win7Taskbar
-	Win7Taskbar.setCurrentProcessAppID("Rayrobdod.ImageManipulator")
-	
-	Main.main(args)
+	/**
+	 * @param extension - the file name extension to create a filter for
+	 * @return A Some(FileFilter), where the FileFilter filters for the extension
+	 		and has an appropriate extension. None if there is a better extension
+	 		for the filter
+	 * @todo consider making the return an Either[FileFilter,String]?
+			The String would be an other extension to use
+	 * @trythis cache the FileFilters?
+	 */
+	def apply(extension:String):Option[FileFilter] = {
+		val ext = extension.toLowerCase
+		
+		val description = ext match {
+			case "bmp" => "Bitmap (bmp)"
+			case "wbmp" => "Wireless Bitmap (wbmp)"
+			case "gif" => "Graphical Interchange Format (gif)"
+			case "jpeg" | "jpg" => "Joint Photographic Experts Group format (jpeg)"
+			case "png" => "Portable Network Graphic (png)"
+			case _ => ext.toUpperCase + " file (" + ext + ")"
+		}
+		
+		ext match {
+			case "jpg" => None
+			case "jpeg" => Some(new FileNameExtensionFilter(description, "jpeg", "jpg"))
+			case _ => Some(new FileNameExtensionFilter(description, ext))
+		}
+	}
 }

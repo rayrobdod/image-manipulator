@@ -1,8 +1,5 @@
 package com.rayrobdod.swing
 
-import com.rayrobdod.deductionTactics._
-import com.rayrobdod.deductionTactics.view._
-
 import javax.swing.event.{ListSelectionListener, ListSelectionEvent}
 import javax.swing.{ListModel, AbstractListModel, ComboBoxModel}
 

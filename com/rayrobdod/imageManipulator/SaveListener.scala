@@ -45,6 +45,8 @@ import java.io.IOException
  * @author Raymond Dodge
  * @version 2012 Jun 18
  * @version 2012 Jun 19 - making filechooser persistent
+ * @version 2012 Aug 16 - Changed fileFilters to dynamically get listeners from
+			ImageIO#getWriterFileSuffixes and to use a lot of maps 
  */
 class SaveListener(val getImage:Function0[RenderedImage]) extends ActionListener
 {
@@ -53,13 +55,23 @@ class SaveListener(val getImage:Function0[RenderedImage]) extends ActionListener
 		val chooser = SaveAndLoadListener.fileChooser
 		chooser.setAcceptAllFileFilterUsed(false)
 		
-		// TODO: allow other image writers based on which ones exist
-		val fileFiltersToSuffix:Map[FileFilter, String] = Map(
-			(new FileNameExtensionFilter("Bitmap (bmp)", "bmp"), "bmp"),
-			(new FileNameExtensionFilter("Wireless Bitmap (wbmp)", "wbmp"), "wbmp"),
-			(new FileNameExtensionFilter("Joint Photographic Experts Group format (jpeg)", "jpeg", "jpg"), "jpeg"),
-			(new FileNameExtensionFilter("Portable Network Graphic (png)", "png"), "png")
-		)
+		val fileFiltersToSuffix:Map[FileFilter, String] =
+		{
+			val uniqueExtensionList = ImageIO.getWriterFileSuffixes
+					.map{_.toLowerCase}.distinct
+			
+			val returnValue = uniqueExtensionList
+					.map{ImageExtensionToExtensionFilter}
+					.zip(uniqueExtensionList)
+					.filterNot({(x:Tuple2[Option[FileFilter], String]) => x._1} andThen {(x) => x == None})
+					.map{(x) => ((x._1.get, x._2))}
+					.toMap
+			
+			// debug
+			//returnValue.foreach{(x) => println(x._1, x._2)}
+			
+			returnValue
+		}
 		
 		chooser.resetChoosableFileFilters()
 		val fileFilters = fileFiltersToSuffix.keys

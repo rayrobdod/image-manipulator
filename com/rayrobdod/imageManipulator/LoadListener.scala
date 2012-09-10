@@ -45,23 +45,21 @@ import java.io.IOException
  * @author Raymond Dodge
  * @version 2012 Jun 18
  * @version 2012 Jun 19 - making filechooser persistent
+ * @version 2012 Aug 16 - Changed fileFilters to dynamically get listeners from
+			ImageIO#getReaderFileSuffixes and to use a lot of maps 
  */
 class LoadListener(val setImage:Function1[BufferedImage, Any]) extends ActionListener
 {
-	def actionPerformed(arg0:ActionEvent)
+	def actionPerformed(e:ActionEvent)
 	{
 		val chooser = SaveAndLoadListener.fileChooser
 		chooser.setAcceptAllFileFilterUsed(true)
 		
-		// TODO: allow other image readers based on which ones exist
-		val fileFilters:Seq[FileFilter] = Seq(
-			new FileNameExtensionFilter("All Image Formats", "bmp", "wbmp", "jpeg", "jpg", "gif", "png"),
-			new FileNameExtensionFilter("Bitmap (bmp)", "bmp"),
-			new FileNameExtensionFilter("Wireless Bitmap (wbmp)", "wbmp"),
-			new FileNameExtensionFilter("Joint Photographic Experts Group format (jpeg)", "jpeg", "jpg"),
-			new FileNameExtensionFilter("Graphical Interchange Format (gif)", "gif"),
-			new FileNameExtensionFilter("Portable Network Graphic (png)", "png")
-		)
+		val fileFilters:Seq[FileFilter] =
+			AllImageFormatsFilter.item +: ImageIO.getReaderFileSuffixes
+					.map{_.toLowerCase}.distinct
+					.map{ImageExtensionToExtensionFilter}
+					.diff(Seq(None)).map{_.get}.toList
 		chooser.resetChoosableFileFilters()
 		fileFilters.foreach{chooser.addChoosableFileFilter(_)}
 		
@@ -79,7 +77,6 @@ class LoadListener(val setImage:Function1[BufferedImage, Any]) extends ActionLis
 			{
 				case e1:IOException => e1.printStackTrace();
 			}
-		
 		}
 	}
 }

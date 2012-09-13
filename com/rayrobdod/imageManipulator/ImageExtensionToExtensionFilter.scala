@@ -39,6 +39,8 @@ import javax.swing.filechooser.{FileNameExtensionFilter, FileFilter}
  * 
  * @author Raymond Dodge
  * @version 2012 Aug 16
+ * @version 2012 Sept 11 - taking the description method out of the apply method 
+ * @since 1.0.1
  */
 object ImageExtensionToExtensionFilter extends Function1[String, Option[FileFilter]]
 {
@@ -54,19 +56,25 @@ object ImageExtensionToExtensionFilter extends Function1[String, Option[FileFilt
 	def apply(extension:String):Option[FileFilter] = {
 		val ext = extension.toLowerCase
 		
-		val description = ext match {
+		val descript = description(ext)
+		
+		ext match {
+			case "jpg" => None
+			case "jpeg" => Some(new FileNameExtensionFilter(descript, "jpeg", "jpg"))
+			case _ => Some(new FileNameExtensionFilter(descript, ext))
+		}
+	}
+	
+	def description(extension:String):String = {
+		val ext = extension.toLowerCase
+		
+		ext match {
 			case "bmp" => "Bitmap (bmp)"
 			case "wbmp" => "Wireless Bitmap (wbmp)"
 			case "gif" => "Graphical Interchange Format (gif)"
 			case "jpeg" | "jpg" => "Joint Photographic Experts Group format (jpeg)"
 			case "png" => "Portable Network Graphic (png)"
 			case _ => ext.toUpperCase + " file (" + ext + ")"
-		}
-		
-		ext match {
-			case "jpg" => None
-			case "jpeg" => Some(new FileNameExtensionFilter(description, "jpeg", "jpg"))
-			case _ => Some(new FileNameExtensionFilter(description, ext))
 		}
 	}
 }

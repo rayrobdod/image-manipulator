@@ -30,10 +30,7 @@ package com.rayrobdod.imageManipulator
 import java.awt.event.{ActionListener, ActionEvent}
 import javax.swing.JFileChooser
 import javax.imageio.ImageIO
-import javax.imageio.ImageIO.{getWriterFileSuffixes => writerSuffixes,
-			getWriterMIMETypes => writerMime,
-			getWriterFormatNames => writerFormats
-}
+import javax.imageio.ImageIO.{getWriterFileSuffixes => writerSuffixes}
 import javax.swing.filechooser.{FileNameExtensionFilter, FileFilter}
 import java.awt.image.RenderedImage
 import java.io.IOException
@@ -47,12 +44,14 @@ import java.io.IOException
  * @version 2012 Jun 19 - making filechooser persistent
  * @version 2012 Aug 16 - Changed fileFilters to dynamically get listeners from
 			ImageIO#getWriterFileSuffixes and to use a lot of maps 
+ * @version 2012 Sept 10 - renamed from SaveListener to SwingSaveListener
+ * @version 2012 Sept 10 - changes due to change in signature of SwingSaveAndLoadListener.fileChooser
  */
-class SaveListener(val getImage:Function0[RenderedImage]) extends ActionListener
+class SwingSaveListener(val getImage:Function0[RenderedImage]) extends ActionListener
 {
 	def actionPerformed(arg0:ActionEvent)
 	{
-		val chooser = SaveAndLoadListener.fileChooser
+		val chooser = SwingSaveAndLoadListener.fileChooser.get
 		chooser.setAcceptAllFileFilterUsed(false)
 		
 		val fileFiltersToSuffix:Map[FileFilter, String] =

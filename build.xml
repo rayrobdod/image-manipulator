@@ -2,15 +2,16 @@
 	<description />
 	
 	<property name="classfiles" value="**/*.class META-INF/** releaseNotes.txt rayrobdod?license.txt **/*.png" />
-	<property name="sourcefiles" value="**/*.java **/*.scala build.xml *.proguard" />
+	<property name="sourcefiles" value="**/*.java **/*.scala build.xml **/*.proguard" />
 	
 	<property name="tmp" value="C:/Users/Raymond/AppData/Local/Temp" />
 	<property name="scala-lib" location="C:/Program Files/Scala/scala-2.9.1.final/lib/scala-library.jar" />
 	<property name="scala-comp" location="C:/Program Files/Scala/scala-2.9.1.final/lib/scala-compiler.jar" />
+	<property name="javaws" location="C:\Program Files\Java\jdk1.7.0_07\jre\lib\javaws.jar" />
 	<!-- property name="anonFunReduce" value="-Xplugin:C:/Users/Raymond/Documents/Programming/Java/ScalaParserPlugin/CommonAnonFuns.zip" / -->
 	<property name="anonFunReduce" value="" />
 	
-	<property name="version" value="1.0.1" />
+	<property name="version" value="1.0.2" />
 	<!-- property name="myClasses" location="classes" / -->
 	<property name="jarNamePattern" location="C:/Users/Raymond/Documents/website/programming/java/programs/imageManipulator/${version}/imageManipulator-${version}-" />
 	
@@ -22,6 +23,7 @@
 		<pathelement location="${myClasses}"/>
 		<pathelement location="C:/Users/Raymond/Documents/Programming/Java/Imported JAR Files/jna-3.4.0.jar"/>
 		<pathelement location="C:/Users/Raymond/Documents/Programming/Java/Imported JAR Files/jna-platform-3.4.1.jar"/>
+		<pathelement location="${javaws}" />
 	</path>
 	
 	<target name="init" >
@@ -150,7 +152,14 @@
 	</target>
 	
 	<target name="jars" depends="jar-full.orig.src,jar-full.orig,jar-full.full,jar-mini.full,jar-micro.full" 
-			description="build all jar files" />
+			description="build all jar files" >
+		
+		<copy todir="${jarNamePattern}\..\" >
+			<fileset dir="Image Manipulator">
+				<include name="**\releaseNotes.txt" />
+			</fileset>
+		</copy>
+	</target>
 	
 	<target name="jars-forked" description="run jars, but for the file so that there won't be memory problems" >
 		<java

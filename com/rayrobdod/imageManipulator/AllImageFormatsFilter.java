@@ -36,6 +36,7 @@ import javax.imageio.ImageIO;
  * 
  * @author Raymond Dodge
  * @version 2012 Aug 16
+ * @since 1.0.1
  */
 public class AllImageFormatsFilter
 {

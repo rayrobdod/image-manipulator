@@ -30,10 +30,7 @@ package com.rayrobdod.imageManipulator
 import java.awt.event.{ActionListener, ActionEvent}
 import javax.swing.JFileChooser
 import javax.imageio.ImageIO
-import javax.imageio.ImageIO.{getReaderFileSuffixes => readerSuffixes,
-			getReaderMIMETypes => readerMime,
-			getReaderFormatNames => readerFormats
-}
+import javax.imageio.ImageIO.{getReaderFileSuffixes => readerSuffixes}
 import javax.swing.filechooser.{FileNameExtensionFilter, FileFilter}
 import java.awt.image.{RenderedImage, BufferedImage}
 import java.io.IOException
@@ -47,16 +44,18 @@ import java.io.IOException
  * @version 2012 Jun 19 - making filechooser persistent
  * @version 2012 Aug 16 - Changed fileFilters to dynamically get listeners from
 			ImageIO#getReaderFileSuffixes and to use a lot of maps 
+ * @version 2012 Sept 10 - renamed from LoadListener to SwingLoadListener
+ * @version 2012 Sept 10 - changes due to change in signature of SwingSaveAndLoadListener.fileChooser
  */
-class LoadListener(val setImage:Function1[BufferedImage, Any]) extends ActionListener
+class SwingLoadListener(val setImage:Function1[BufferedImage, Any]) extends ActionListener
 {
 	def actionPerformed(e:ActionEvent)
 	{
-		val chooser = SaveAndLoadListener.fileChooser
+		val chooser = SwingSaveAndLoadListener.fileChooser.get
 		chooser.setAcceptAllFileFilterUsed(true)
 		
 		val fileFilters:Seq[FileFilter] =
-			AllImageFormatsFilter.item +: ImageIO.getReaderFileSuffixes
+			AllImageFormatsFilter.item +: readerSuffixes
 					.map{_.toLowerCase}.distinct
 					.map{ImageExtensionToExtensionFilter}
 					.diff(Seq(None)).map{_.get}.toList
@@ -79,6 +78,7 @@ class LoadListener(val setImage:Function1[BufferedImage, Any]) extends ActionLis
 			}
 		}
 	}
+	
 }
 
 /**
@@ -87,8 +87,28 @@ class LoadListener(val setImage:Function1[BufferedImage, Any]) extends ActionLis
  * 
  * @author Raymond Dodge
  * @version 2012 Jun 19
+ * @version 2012 Sept 10 - renamed from SaveAndLoadListener to SwingSaveAndLoadListener
+ * @version 2012 Sept 10 - fileChooser now returns a Option[JFileChooser], rather than a JFileChooser 
+ * @version 2012 Sept 10 - adding the canBeUsed method
  */
-object SaveAndLoadListener
+object SwingSaveAndLoadListener
 {
-	val fileChooser = new JFileChooser
+	/**
+	 * used by the SwingLoadListener and SwingSaveListener so that
+	 * there is some level of perminence when changing files
+	 * 
+	 */
+	val fileChooser:Option[JFileChooser] = {
+		try {
+			Some(new JFileChooser)
+		} catch {
+			case x:java.security.AccessControlException => None
+		}
+	}
+	
+	/**
+	 * true if this expects SwingLoadListener and SwingSaveListener
+	 *  to be able to execute without problems
+	 */
+	def canBeUsed:Boolean = {this.fileChooser.isDefined}
 }

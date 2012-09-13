@@ -29,6 +29,7 @@ package com.rayrobdod.imageManipulator
 
 import com.rayrobdod.swing.{ScalaSeqListModel, AbstractComboBoxModel}
 import java.awt.{GridBagLayout, GridBagConstraints, Image}
+import java.awt.event.{ActionListener, ActionEvent}
 import java.awt.image.{BufferedImage, RenderedImage}
 import javax.swing.{JLabel, JPanel, JButton, JComboBox, JFrame, ImageIcon}
 import java.awt.image.BufferedImage.{TYPE_INT_ARGB => alpha}
@@ -39,6 +40,7 @@ import java.awt.image.BufferedImage.{TYPE_INT_ARGB => alpha}
  * @author Raymond Dodge
  * @version 2012 Jun 18-19
  * @version 2012 Sept 09 - added 16x16 image icon to frame
+ * @version 2012 Sept 10 - modified to use SaveAndLoadListeners
  * @todo make preview operations work on scaled instances
  */
 class ImageManipulateFrame extends JFrame
@@ -72,9 +74,9 @@ class ImageManipulateFrame extends JFrame
 		afterImageLabel.setIcon(new ImageIcon(scaleImage(x)))
 	}
 	
-	object UpdateImageActionListener extends java.awt.event.ActionListener
+	object UpdateImageActionListener extends ActionListener
 	{
-		def actionPerformed(arg0:java.awt.event.ActionEvent)
+		def actionPerformed(e:ActionEvent)
 		{
 			if (modeChooser.getSelectedIndex < 0)
 			{
@@ -88,9 +90,9 @@ class ImageManipulateFrame extends JFrame
 		}
 	}
 	
-	object SetupCustomModeArea extends java.awt.event.ActionListener
+	object SetupCustomModeArea extends ActionListener
 	{
-		def actionPerformed(arg0:java.awt.event.ActionEvent)
+		def actionPerformed(e:ActionEvent)
 		{
 			modeCustomArea.removeAll
 			
@@ -111,10 +113,10 @@ class ImageManipulateFrame extends JFrame
 	val modeCustomArea = new JPanel
 	
 	modeChooser.setSelectedIndex(0)
-	// add UpdateImageActionListener first so that it happens last
+	// add UpdateImageActionListener first so that it happens after the loadListener
 	loadButton.addActionListener(UpdateImageActionListener)
-	loadButton.addActionListener(new LoadListener(originalImage_=_))
-	saveButton.addActionListener(new SaveListener(() => afterImage))
+	loadButton.addActionListener(SaveAndLoadListeners.loadListener(originalImage_=_))
+	saveButton.addActionListener(SaveAndLoadListeners.saveListener(() => afterImage))
 	modeChooser.addActionListener(UpdateImageActionListener)
 	modeChooser.addActionListener(SetupCustomModeArea)
 	

@@ -24,29 +24,43 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package com.rayrobdod.imageManipulator.main;
+package com.rayrobdod.imageManipulator
 
-import com.rayrobdod.imageManipulator.ImageManipulateFrame;
-import javax.swing.JFrame;
+import java.awt.image.BufferedImage
+import java.awt.event.ActionListener
 
 /**
- * A main method for the image manipulator program
- * 
  * @author Raymond Dodge
- * @version 2012 Jun 18
- * @version 2012 Sept 08 - transcribed directly from scala with no changes
- * @version 2012 Sept 09 - remarking as public. 
+ * @version 2012 Sept 10
  */
-public class Main
+object SaveAndLoadListeners
 {
-	private Main() {}
-	
-	public static final void main(String[] args)
+	@throws(classOf[NoAvailableFileOperatorsException])
+	def loadListener(setImage:Function1[BufferedImage, Any]):ActionListener =
 	{
-		JFrame frame = new ImageManipulateFrame();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.pack();
-		frame.setLocationByPlatform(true);
-		frame.setVisible(true);
+		if (SwingSaveAndLoadListener.canBeUsed) {
+			new SwingLoadListener(setImage)
+		} else if (JavaWSSaveAndLoadListener.canBeUsed) {
+			new JavaWSLoadListener(setImage)
+		} else {
+			throw new NoAvailableFileOperatorsException
+		}
+	}
+	
+	@throws(classOf[NoAvailableFileOperatorsException])
+	def saveListener(getImage:Function0[BufferedImage]):ActionListener =
+	{
+		if (SwingSaveAndLoadListener.canBeUsed) {
+			new SwingSaveListener(getImage)
+		} else if (JavaWSSaveAndLoadListener.canBeUsed) {
+			new JavaWSSaveListener(getImage)
+		} else {
+			throw new NoAvailableFileOperatorsException
+		}
+	}
+	
+	class NoAvailableFileOperatorsException(msg:String) extends Exception(msg)
+	{
+		def this() = {this("No SaveAndLoadListeners work under the current environment ")}
 	}
 }

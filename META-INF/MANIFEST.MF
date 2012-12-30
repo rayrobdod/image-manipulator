@@ -1,8 +1,14 @@
 Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.8.2
 Created-By: 1.7.0_07-b10 (Oracle Corporation)
+Implementation-Version: 1.0.3
 Main-Class: com.rayrobdod.imageManipulator.main.Main
 Implementation-Vendor: Raymond Dodge
+Implementation-URL: http://rayrobdod.name/programming/java/programs/im
+ ageManipulator/
 Implementation-Title: Image Manipulator
-Implementation-Version: 1.0.1
+
+Name: scala/
+Implementation-Version: 2.9.1
+Implementation-URL: http://www.scala-lang.org/
 

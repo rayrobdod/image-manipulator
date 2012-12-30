@@ -83,7 +83,7 @@ final class TwoToneImageOp(val threshold:Int) extends NoResizeBufferedImageOp
 	override def createCompatibleDestImage(src:BufferedImage, cm:java.awt.image.ColorModel) = {
 		new BufferedImage(src.getWidth, src.getHeight, BufferedImage.TYPE_BYTE_BINARY)
 	}
-		
+	
 	def filter(src:BufferedImage, x:BufferedImage) = {
 		val dst = Option(x).getOrElse(createCompatibleDestImage(src, null))
 		if (!(dst.getWidth == src.getWidth && src.getHeight == dst.getHeight)) throw new IllegalArgumentException

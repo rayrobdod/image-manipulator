@@ -33,48 +33,36 @@ import javax.imageio.ImageIO.{getReaderFileSuffixes => readerSuffixes,
 			getReaderFormatNames => readerFormats
 }
 import javax.swing.filechooser.{FileNameExtensionFilter, FileFilter}
+import javax.imageio.spi.ImageReaderWriterSpi;
 
 /**
- * A function that creates a File Filter for the specified file extension
+ * A function that creates a File Filter for the specified ImageReaderWriterSpi
  * 
  * @author Raymond Dodge
- * @version 2012 Aug 16
- * @version 2012 Sept 11 - taking the description method out of the apply method 
- * @since 1.0.1
+ * @version 2012 Nov 19
+ * @since 1.0.3
  */
-object ImageExtensionToExtensionFilter extends Function1[String, Option[FileFilter]]
+object ImageIoSpiToExtensionFilter extends Function1[ImageReaderWriterSpi, FileFilter]
 {
 	/**
-	 * @param extension - the file name extension to create a filter for
-	 * @return A Some(FileFilter), where the FileFilter filters for the extension
-	 		and has an appropriate extension. None if there is a better extension
-	 		for the filter
-	 * @todo consider making the return an Either[FileFilter,String]?
-			The String would be an other extension to use
-	 * @trythis cache the FileFilters?
 	 */
-	def apply(extension:String):Option[FileFilter] = {
-		val ext = extension.toLowerCase
-		
-		val descript = description(ext)
-		
-		ext match {
-			case "jpg" => None
-			case "jpeg" => Some(new FileNameExtensionFilter(descript, "jpeg", "jpg"))
-			case _ => Some(new FileNameExtensionFilter(descript, ext))
+	def apply(spi:ImageReaderWriterSpi):FileFilter = {
+		val formatName = spi.getFileSuffixes match {
+			// I really don't like any of the default names
+			case Array("bmp") => "Bitmap"
+			case Array("wbmp") => "Wireless Bitmap"
+			case Array("gif") => "Graphical Interchange Format"
+			case Array("jpg", "jpeg") => "Joint Photographic Experts Group format"
+			case Array("png") => "Portable Network Graphic"
+			case _ => {
+				val descripts = spi.getFormatNames.map{_.toLowerCase}.distinct
+				descripts.tail.foldLeft(descripts.head){_+" OR "+_}
+			}
 		}
-	}
-	
-	def description(extension:String):String = {
-		val ext = extension.toLowerCase
 		
-		ext match {
-			case "bmp" => "Bitmap (bmp)"
-			case "wbmp" => "Wireless Bitmap (wbmp)"
-			case "gif" => "Graphical Interchange Format (gif)"
-			case "jpeg" | "jpg" => "Joint Photographic Experts Group format (jpeg)"
-			case "png" => "Portable Network Graphic (png)"
-			case _ => ext.toUpperCase + " file (" + ext + ")"
-		}
+		val ext = spi.getFileSuffixes.tail.foldLeft(spi.getFileSuffixes.head){_ + "; " + _}.toLowerCase
+		val descript = formatName + " (" + ext + ")"
+		
+		new FileNameExtensionFilter(descript, spi.getFileSuffixes()(0)) // TODO: array
 	}
 }

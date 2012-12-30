@@ -18,10 +18,11 @@ class ScalaSeqListModel[A](backing:Seq[A]) extends AbstractListModel[A]
  * @author Raymond Dodge
  * @version 01 Feb 2012
  * @version 19 Jun 2012 - moving from com.rayrobdod.deductionTactics.test to com.rayrobdod.swing
+ * @version 09 Nov 2012 - apparently this needed to be templated on an Integer, not an int.
  */
-class RangeListModel(override val getSize:Int) extends AbstractListModel[Int]
+class RangeListModel(override val getSize:Int) extends AbstractListModel[java.lang.Integer]
 {
-	override def getElementAt(i:Int):Int = i
+	override def getElementAt(i:Int):Integer = i
 }
 
 /**

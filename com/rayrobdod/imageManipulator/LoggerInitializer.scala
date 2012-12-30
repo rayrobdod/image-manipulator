@@ -39,7 +39,7 @@ private[imageManipulator] object LoggerInitializer
 //	val warningFileHandler = new FileHandler("%t/imageManipulator%g.log")
 	val allSwingHandler = new SwingWindowHandler
 	try {
-		allSwingHandler.setLevel(Level.ALL)
+		allSwingHandler.setLevel(Level.WARNING)
 	} catch {
 		case x:java.security.AccessControlException =>
 			// ignore because Level.ALL isn't strictly neccessary.
@@ -49,7 +49,7 @@ private[imageManipulator] object LoggerInitializer
 	val javaWSSaveLogger = Logger.getLogger(
 			"com.rayrobdod.imageManipulator.JavaWSSaveListener")
 	javaWSSaveLogger.addHandler(allSwingHandler)
-	javaWSSaveLogger.setLevel(Level.ALL)
+	javaWSSaveLogger.setLevel(Level.WARNING)
 }
 
 /**

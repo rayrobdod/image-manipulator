@@ -30,10 +30,11 @@ package com.rayrobdod.imageManipulator
 import java.awt.event.{ActionListener, ActionEvent}
 import javax.swing.JFileChooser
 import javax.imageio.ImageIO
-import javax.imageio.ImageIO.{getReaderFileSuffixes => readerSuffixes}
 import javax.swing.filechooser.{FileNameExtensionFilter, FileFilter}
 import java.awt.image.{RenderedImage, BufferedImage}
 import java.io.IOException
+import javax.imageio.spi.{ImageReaderSpi, IIORegistry}
+import scala.collection.JavaConversions.asScalaIterator
 
 /**
  * An actionlistener that pops up a LoadDialog, reads teh image and then puts in in a particular function 
@@ -46,6 +47,8 @@ import java.io.IOException
 			ImageIO#getReaderFileSuffixes and to use a lot of maps 
  * @version 2012 Sept 10 - renamed from LoadListener to SwingLoadListener
  * @version 2012 Sept 10 - changes due to change in signature of SwingSaveAndLoadListener.fileChooser
+ * @version 2012 Nov 19 - making use ImageReaderSpis directly instead of indirect extension usage
+ * @version 2012 Dec 27 - clears the chooser's accessory before showing it
  */
 class SwingLoadListener(val setImage:Function1[BufferedImage, Any]) extends ActionListener
 {
@@ -54,13 +57,14 @@ class SwingLoadListener(val setImage:Function1[BufferedImage, Any]) extends Acti
 		val chooser = SwingSaveAndLoadListener.fileChooser.get
 		chooser.setAcceptAllFileFilterUsed(true)
 		
-		val fileFilters:Seq[FileFilter] =
-			AllImageFormatsFilter.item +: readerSuffixes
-					.map{_.toLowerCase}.distinct
-					.map{ImageExtensionToExtensionFilter}
-					.diff(Seq(None)).map{_.get}.toList
+		val readers:Seq[ImageReaderSpi] = IIORegistry.getDefaultInstance.getServiceProviders(classOf[ImageReaderSpi], false).toSeq.distinct
+		
+		val fileFilters:Seq[FileFilter] = AllImageFormatsFilter.item +:
+					readers.map{ImageIoSpiToExtensionFilter}
 		chooser.resetChoosableFileFilters()
 		fileFilters.foreach{chooser.addChoosableFileFilter(_)}
+		
+		chooser.setAccessory(null);
 		
 		val returnVal = chooser.showOpenDialog(null)
 		

@@ -2,7 +2,7 @@
 	<description />
 	
 	<property name="classfiles" value="**/*.class META-INF/** releaseNotes.txt rayrobdod?license.txt **/*.png" />
-	<property name="sourcefiles" value="**/*.java **/*.scala build.xml **/*.proguard" />
+	<property name="sourcefiles" value="**/*.java **/*.scala build.xml mini-full.proguard micro-full.proguard" />
 	
 	<property name="tmp" value="C:/Users/Raymond/AppData/Local/Temp" />
 	<property name="scala-lib" location="C:/Program Files/Scala/scala-2.9.1.final/lib/scala-library.jar" />
@@ -11,11 +11,12 @@
 	<!-- property name="anonFunReduce" value="-Xplugin:C:/Users/Raymond/Documents/Programming/Java/ScalaParserPlugin/CommonAnonFuns.zip" / -->
 	<property name="anonFunReduce" value="" />
 	
-	<property name="version" value="1.0.2" />
+	<property name="version" value="1.0.3" />
 	<!-- property name="myClasses" location="classes" / -->
 	<property name="jarNamePattern" location="C:/Users/Raymond/Documents/website/programming/java/programs/imageManipulator/${version}/imageManipulator-${version}-" />
 	
 	<property name="myClasses" location="${tmp}/antBuild/classes/" />
+	<property name="javaGen" location="${tmp}/antBuild/javaGen/" />
 	<!-- property name="jarNamePattern" value="${tmp}/antBuild/jars/" / -->
 	
 	<path id="myClasspath">
@@ -49,6 +50,7 @@
 		
 		<!-- create desitination directory -->
 		<mkdir dir="${myClasses}"/>
+		<mkdir dir="${javaGen}"/>
 	</target>
 	
 	<!-- making classes -->
@@ -79,6 +81,7 @@
 				encoding="UTF-8" includeAntRuntime="false">
 			<include name="com/rayrobdod/util/Win7Taskbar.java" />
 		</javac>
+		
 		
 		<copy todir="${myClasses}" >
 			<fileset dir="Utilities">
@@ -112,8 +115,17 @@
 			<fileset dir="${myClasses}" includes="${classfiles}" />
 			<manifest>
 				<!-- attribute name="Class-Path" value="&quot;${scala-lib}&quot;"/ -->
+				<attribute name="Implementation-Version" value="${version}" />
 			</manifest>
 		</jar>
+	</target>
+	
+	<target name="jar-full.orig.store" depends="jar-full.orig" description="creates a jar with neccessary classes" >
+		<zip destfile="${javaGen}/full-orig-store.jar" compress="false">
+			<zipfileset src="${jarNamePattern}full-orig.jar" />
+		</zip>
+		
+		<gzip src="${javaGen}/full-orig-store.jar" destfile="${jarNamePattern}full-orig.jar.gz"/>
 	</target>
 	
 	<target name="jar-full.orig.src" depends="classes" description="creates a jar with just the original classes, and includes the sources" >
@@ -122,8 +134,17 @@
 			<fileset dir="${myClasses}" includes="${classfiles} ${sourcefiles}" />
 			<manifest>
 				<!-- attribute name="Class-Path" value="&quot;${scala-lib}&quot;"/ -->
+				<attribute name="Implementation-Version" value="${version}" />
 			</manifest>
 		</jar>
+	</target>
+	
+	<target name="jar-full.orig.src.store" depends="jar-full.orig.src" description="creates a jar with neccessary classes" >
+		<zip destfile="${javaGen}/full-orig-src-store.jar" compress="false">
+			<zipfileset src="${jarNamePattern}full-orig-src.jar" />
+		</zip>
+		
+		<gzip src="${javaGen}/full-orig-src-store.jar" destfile="${jarNamePattern}full-orig-src.jar.gz"/>
 	</target>
 	
 	<target name="jar-full.full" depends="classes" description="creates a jar with all the classes" >
@@ -131,6 +152,9 @@
 					manifest="Image Manipulator/META-INF/MANIFEST.MF" >
 			<fileset dir="${myClasses}" includes="${classfiles} scala?license.txt" />
 			<zipfileset src="${scala-lib}" includes="**/*.class" />
+			<manifest>
+				<attribute name="Implementation-Version" value="${version}" />
+			</manifest>
 		</jar>
 	</target>
 	
@@ -142,6 +166,14 @@
 		<pack200 srcfile="${jarNamePattern}mini-full.jar" repack="true" unkownAttribute="strip" />
 	</target>
 	
+	<target name="jar-mini.full.store" depends="jar-mini.full" description="creates a jar with neccessary classes" >
+		<jar destfile="${javaGen}/mini-full-store.jar" compress="false">
+			<zipfileset src="${jarNamePattern}mini-full.jar" />
+		</jar>
+		
+		<gzip src="${javaGen}/mini-full-store.jar" destfile="${jarNamePattern}mini-full.jar.gz"/>
+	</target>
+	
 	<target name="jar-micro.full" depends="jar-full.full"
 				description="creates a jar with neccessary classes and names changed" >
 		<proguard configuration="Image Manipulator\micro-full.proguard">
@@ -149,6 +181,14 @@
 			-outjars '${jarNamePattern}micro-full.jar'
 		</proguard>
 		<pack200 srcfile="${jarNamePattern}micro-full.jar" repack="true" unkownAttribute="strip" />
+	</target>
+	
+	<target name="jar-micro.full.store" depends="jar-micro.full" description="creates a jar with neccessary classes" >
+		<jar destfile="${javaGen}/micro-full-store.jar" compress="false">
+			<zipfileset src="${jarNamePattern}micro-full.jar" />
+		</jar>
+		
+		<gzip src="${javaGen}/micro-full-store.jar" destfile="${jarNamePattern}micro-full.jar.gz"/>
 	</target>
 	
 	<target name="jars" depends="jar-full.orig.src,jar-full.orig,jar-full.full,jar-mini.full,jar-micro.full" 
@@ -161,50 +201,56 @@
 		</copy>
 	</target>
 	
-	<target name="jars-forked" description="run jars, but for the file so that there won't be memory problems" >
-		<java
-				classname="org.apache.tools.ant.launch.Launcher"
-				fork="true"
-				failonerror="true"
-				dir="Image Manipulator"
-				timeout="4000000"
-				taskname="forkAnt"
-		>
-			<classpath>
-				<pathelement location="${ant.home}/../ant-launcher.jar"/>
-				<pathelement location="${ant.home}/../ant.jar"/>
-				<pathelement location="C:\Program Files (x86)\Java\jdk1.7.0_07\lib\tools.jar"/>
-			</classpath>
-			<arg value="jars"/>
-		</java>
-	</target>
+	<target name="jars-gz" depends="jar-mini.full.store,jar-micro.full.store,jar-full.orig.store,jar-full.orig.src.store"
+			description="build all jar files using a single-file gzip file rather than individual gzipping" />
 	<!-- end making jars -->
 	
 	
 	<!-- making packs -->
-	<target name="pack" depends="jar-full.orig,jar-full.full" description="pack processing on the jar file">
-		<copy file="${jarNamePattern}full-full.jar" tofile="${jarNamePattern}full-full-nodebug.jar" />
-		<copy file="${jarNamePattern}full-orig.jar" tofile="${jarNamePattern}full-orig-nodebug.jar" />
-		<pack200 srcfile="${jarNamePattern}full-orig-nodebug.jar" repack="true" unkownAttribute="strip" />
-		<pack200 srcfile="${jarNamePattern}full-full-nodebug.jar" repack="true" unkownAttribute="strip" />
-		
+	<target name="pack" depends="jars" description="pack processing on the jar file">
+		<pack200 srcfile="${jarNamePattern}full-orig-src.jar" effort="9" />
 		<pack200 srcfile="${jarNamePattern}full-orig.jar" effort="9" />
-		<pack200 srcfile="${jarNamePattern}full-full.jar" effort="9" />
-		<pack200 srcfile="${jarNamePattern}full-orig-nodebug.jar" effort="9" />
-		<pack200 srcfile="${jarNamePattern}full-full-nodebug.jar" effort="9" />
-		
-		<property name="externalIncludes" value="C:\Users\Raymond\Documents\website\programming\java\externalIncludes\" />
-		<copy file="${scala-lib}" tofile="${externalIncludes}/scala-library_9-2.jar" />
-		<pack200 srcfile="${externalIncludes}/scala-library_9-2.jar" repack="true" unkownAttribute="strip" />
-		<pack200 srcfile="${externalIncludes}/scala-library_9-2.jar" effort="9" />
+		<pack200 srcfile="${jarNamePattern}mini-full.jar" effort="9" />
+		<pack200 srcfile="${jarNamePattern}micro-full.jar" effort="9" />
 	</target>
 	<!-- end making packs -->
+	
+	<target name="website-prep" depends="pack,jars-gz,jars">
+		<macrodef name="createVarFile" description="Make a var file to select between ">
+			<attribute name="file"/>
+			
+			<sequential>
+				<move file="${jarNamePattern}@{file}.jar" tofile="${jarNamePattern}@{file}.jar.identity" />
+				<move file="${jarNamePattern}@{file}.jar.gz" tofile="${jarNamePattern}@{file}.jar.gzip" />
+				<move file="${jarNamePattern}@{file}.jar.pack.gz" tofile="${jarNamePattern}@{file}.jar.pack.gzip" />
+				
+				<echo file="${jarNamePattern}@{file}.jar.var">URL: @{file}.jar
+
+URI: @{file}.jar.identity
+Content-type: application/java-archive
+
+URI: @{file}.jar.gzip
+Content-type: application/java-archive
+Content-Encoding: gzip; q=0.6
+
+URI: @{file}.jar.pack.gzip
+Content-type: application/java-archive
+Content-Encoding: pack200-gzip; q=1
+				</echo>
+			</sequential>
+		</macrodef>
+		
+		<createVarFile file="full-orig-src" />
+		<createVarFile file="full-orig" />
+		<createVarFile file="mini-full" />
+		<createVarFile file="micro-full" />
+	</target>
 	
 	
 	<!-- clean -->
 	<target name="clean" description="remove built files">
 		<!-- remove contents of myClasses, but leave myClasses behind -->
 		<delete dir="${myClasses}"/>
-		<mkdir dir="${myClasses}"/>
+		<delete dir="${javaGen}"/>
 	</target>
 </project>

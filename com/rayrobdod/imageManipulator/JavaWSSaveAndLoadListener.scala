@@ -32,10 +32,11 @@ import java.awt.image.{RenderedImage, BufferedImage}
 import java.io.IOException
 import javax.jnlp.{ServiceManager, FileOpenService, FileSaveService}
 import javax.jnlp.UnavailableServiceException;
-import javax.imageio.ImageIO
+import javax.imageio.{ImageIO, ImageWriter, ImageWriteParam}
 import javax.imageio.ImageIO.{getReaderFileSuffixes => readerSuffixes,
 			getWriterFileSuffixes => writerSuffixes
 }
+import javax.imageio.spi.{ImageWriterSpi, IIORegistry}
 import LoggerInitializer.{javaWSSaveLogger => saveLogger}
 import java.util.logging.{Level, LogRecord}
 
@@ -51,6 +52,8 @@ class JavaWSLoadListener(val setImage:Function1[BufferedImage, Any]) extends Act
 {
 	def actionPerformed(e:ActionEvent)
 	{
+		ImageIO.scanForPlugins()
+		
 		val fileOpenService = JavaWSSaveAndLoadListener.fileOpenService.get
 		val fileContents = fileOpenService.openFileDialog("", readerSuffixes);
 		if (fileContents != null) {
@@ -92,17 +95,31 @@ class JavaWSSaveListener(val getImage:Function0[RenderedImage]) extends ActionLi
 					val format = JavaWSSaveAndLoadListener.userAskedFileFormat()
 //					saveLogger.log(Level.FINER, "format is :" + format)
 					
-					format.foreach{(format:String) =>
+					format.foreach{(format:(ImageWriterSpi, Option[ImageWriteParam])) =>
 //						saveLogger.entering("JavaWSSaveListener$AnonRunnable$anonForEach", "apply", format);
 						
+						val (writerSPI, param) = format
 						new Thread(new Runnable() {
-							def run() = {
-								ImageIO.write(getImage(), format, out );
-								out.close();
+							def run() = {     
+								val writer = writerSPI.createWriterInstance
+								
+								val output = ImageIO.createImageOutputStream(out)
+								writer.setOutput(output)
+								
+								val image = new javax.imageio.IIOImage( getImage(), null, null )
+								
+								try {
+									writer.write( null, image, param.orNull )
+								} finally {
+									// TODO: display errors 
+									output.close()
+									out.flush()
+									out.close()
+								}
 							}
 						}, "WriteImageToPipedStream").start
 						
-						fileSaveService.saveFileDialog("", Array(format), in, "");
+						fileSaveService.saveFileDialog("", writerSPI.getFileSuffixes, in, "");
 					}
 				}
 			}, "Save Format Poll").start()
@@ -159,30 +176,45 @@ object JavaWSSaveAndLoadListener
 		fileOpenService.isDefined && fileSaveService.isDefined
 	}
 	
-	def userAskedFileFormat():Option[String] = {
+	def userAskedFileFormat():Option[(ImageWriterSpi, Option[ImageWriteParam])] = {
 		import javax.swing.{JDialog, JLabel, JButton, JList, JPanel,
 				DefaultListCellRenderer, ListCellRenderer}
-		import java.awt.BorderLayout.{NORTH, SOUTH}
+		import java.awt.BorderLayout.{NORTH, SOUTH, EAST}
 		import java.awt.event.{WindowAdapter, WindowEvent, ActionListener, ActionEvent}
+		import scala.collection.JavaConversions.asScalaIterator
+		import com.rayrobdod.swing.ScalaSeqListModel
+		import javax.swing.event.{ListSelectionListener, ListSelectionEvent}
 		
 		var buttonUsedToCloseDialog = -1
 		val OK_BUTTON = 1
 		val CANCEL_BUTTON = 0
-			
-		val listOfSuffixes = new JList[String](writerSuffixes)
-		listOfSuffixes.setCellRenderer(new ListCellRenderer[String]() {
+		
+		val availiableSpi:Seq[ImageWriterSpi] = 
+				IIORegistry.getDefaultInstance.getServiceProviders(
+						classOf[ImageWriterSpi], false).toSeq.distinct
+		
+		val writerList = new JList[ImageWriterSpi](new ScalaSeqListModel(availiableSpi))
+		writerList.setCellRenderer(new ListCellRenderer[ImageWriterSpi]() {
 			val base = new DefaultListCellRenderer();
 			
-			override def getListCellRendererComponent(list:JList[_ <: String], value:String,
+			override def getListCellRendererComponent(list:JList[_ <: ImageWriterSpi], value:ImageWriterSpi,
 						index:Int, isSelected:Boolean, cellHasFocus:Boolean) =
 			{
 				base.getListCellRendererComponent(list:JList[_],
-						ImageExtensionToExtensionFilter.description(value),
+						value.getFileSuffixes.tail.foldLeft("[" + value.getFileSuffixes.head){
+							(soFar:String, next:String) => soFar + "," + next;
+						} + "]",
 						index, isSelected, cellHasFocus) 
 			}
 		})
-		val dialogLock = new Object()
+		val writerParam = new ImageWriteParamAccessory(null)
+		writerList.addListSelectionListener(new ListSelectionListener {
+			override def valueChanged(e:ListSelectionEvent) {
+				writerParam.p = Option(writerList.getSelectedValue).map{_.createWriterInstance.getDefaultWriteParam}
+			}
+		})
 		
+		val dialogLock = new Object()
 		class DialogAnswerListener(closeButton:Int) extends WindowAdapter with ActionListener
 		{
 			override def windowClosing(e:WindowEvent) {
@@ -208,7 +240,8 @@ object JavaWSSaveAndLoadListener
 		object dialog extends JDialog(null:JDialog, "Choose format to save as")
 		{
 			add(new JLabel("Chose which format to save as"), NORTH)
-			add(listOfSuffixes)
+			add(writerList)
+			add(writerParam, EAST)
 			add({
 				val p = new JPanel()
 				p.add({
@@ -238,6 +271,6 @@ object JavaWSSaveAndLoadListener
 			}
 		}
 		
-		return Option(listOfSuffixes.getSelectedValue).filter{(x:String) => buttonUsedToCloseDialog == OK_BUTTON}
+		return Option((writerList.getSelectedValue, writerParam.p)).filter{(x:Any) => buttonUsedToCloseDialog == OK_BUTTON}
 	}
 }

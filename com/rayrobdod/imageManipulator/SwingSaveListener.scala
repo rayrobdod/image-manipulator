@@ -30,10 +30,11 @@ package com.rayrobdod.imageManipulator
 import java.awt.event.{ActionListener, ActionEvent}
 import javax.swing.JFileChooser
 import javax.imageio.ImageIO
-import javax.imageio.ImageIO.{getWriterFileSuffixes => writerSuffixes}
 import javax.swing.filechooser.{FileNameExtensionFilter, FileFilter}
 import java.awt.image.RenderedImage
 import java.io.IOException
+import javax.imageio.spi.{ImageWriterSpi, IIORegistry}
+import scala.collection.JavaConversions.asScalaIterator
 
 /**
  * An actionlistener that pops up a SaveDialog and puts the image returned
@@ -46,6 +47,8 @@ import java.io.IOException
 			ImageIO#getWriterFileSuffixes and to use a lot of maps 
  * @version 2012 Sept 10 - renamed from SaveListener to SwingSaveListener
  * @version 2012 Sept 10 - changes due to change in signature of SwingSaveAndLoadListener.fileChooser
+ * @version 2012 Nov 19 - making use ImageWriterSpis directly instead of indirect extension usage
+ * @version 2012 Dec 27 - set the chooser's accessory to a component that will modify the ImageWriteParams
  */
 class SwingSaveListener(val getImage:Function0[RenderedImage]) extends ActionListener
 {
@@ -54,27 +57,21 @@ class SwingSaveListener(val getImage:Function0[RenderedImage]) extends ActionLis
 		val chooser = SwingSaveAndLoadListener.fileChooser.get
 		chooser.setAcceptAllFileFilterUsed(false)
 		
-		val fileFiltersToSuffix:Map[FileFilter, String] =
+		val fileFiltersToSPI:Map[FileFilter, ImageWriterSpi] =
 		{
-			val uniqueExtensionList = ImageIO.getWriterFileSuffixes
-					.map{_.toLowerCase}.distinct
-			
-			val returnValue = uniqueExtensionList
-					.map{ImageExtensionToExtensionFilter}
-					.zip(uniqueExtensionList)
-					.filterNot({(x:Tuple2[Option[FileFilter], String]) => x._1} andThen {(x) => x == None})
-					.map{(x) => ((x._1.get, x._2))}
-					.toMap
-			
-			// debug
-			//returnValue.foreach{(x) => println(x._1, x._2)}
+			val writers:Seq[ImageWriterSpi] = IIORegistry.getDefaultInstance.getServiceProviders(classOf[ImageWriterSpi], false).toSeq.distinct
+			val returnValue = writers.map{ImageIoSpiToExtensionFilter}.zip(writers).toMap
 			
 			returnValue
 		}
 		
 		chooser.resetChoosableFileFilters()
-		val fileFilters = fileFiltersToSuffix.keys
+		val fileFilters = fileFiltersToSPI.keys
 		fileFilters.foreach{chooser.addChoosableFileFilter(_)}
+		
+		val acc = new ImageWriteParamAccessory(fileFiltersToSPI)
+		chooser.setAccessory(acc)
+		chooser.addPropertyChangeListener(acc)
 		
 		val returnVal = chooser.showSaveDialog(null);
 		
@@ -82,10 +79,25 @@ class SwingSaveListener(val getImage:Function0[RenderedImage]) extends ActionLis
 		{
 			try
 			{
-				ImageIO.write(getImage(), 
-						fileFiltersToSuffix(chooser.getFileFilter()),
+				val writerSPI = fileFiltersToSPI(chooser.getFileFilter())
+				val writer = writerSPI.createWriterInstance()
+				
+				val output = ImageIO.createImageOutputStream(chooser.getSelectedFile())
+				writer.setOutput(output)
+				
+				val image = new javax.imageio.IIOImage( getImage(), null, null )
+				
+				try {
+					writer.write( null, image, acc.p.orNull )
+				} finally {
+					// TODO: display errors in a swing manner 
+					output.close()
+				}
+				
+				/* ImageIO.write(getImage(), 
+						fileFiltersToSPI(chooser.getFileFilter()).getFormatNames()(0),
 						chooser.getSelectedFile()
-				)
+				) */
 			}
 			catch
 			{

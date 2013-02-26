@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2012, Raymond Dodge
+	Copyright (c) 2012-2013, Raymond Dodge
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -43,7 +43,7 @@ final class ChangeColor extends Operation
 {
 	import com.rayrobdod.imageManipulator.operations.ChangeColor.Colors
 
-	override val name = "ChangeColor"
+	override val name = "Change Color"
 	
 	class ColorsComboBoxModel extends ScalaSeqListModel[Colors.Value](Colors.values) with AbstractComboBoxModel[Colors.Value]
 	
@@ -75,6 +75,7 @@ final class ChangeColor extends Operation
  * 
  * @author Raymond Dodge
  * @version 2012 Jun 19
+ * @version 2013 Feb 03 - Colors._ are now vals instead of objects
  */
 object ChangeColor
 {
@@ -83,29 +84,33 @@ object ChangeColor
 	 */
 	object Colors
 	{
-		val values = Seq(Red, Green, Blue, Yellow, Cyan, Magenta, Black)
-		trait Value
+		class Value(val name:String) {
+			override def toString = name;
+		}
 		
 		/** <div style="color:#F00;">Red</div> */
-		case object Red extends Value
+		val Red = new Value("Red");
 		
 		/** <div style="color:#0F0;">Green</div> */
-		case object Green extends Value
+		val Green = new Value("Green")
 		
 		/** <div style="color:#00F;">Blue</div> */
-		case object Blue extends Value
+		val Blue = new Value("Blue")
 		
 		/** <div style="color:#FF0;">Yellow</div> */
-		case object Yellow extends Value
+		val Yellow = new Value("Yellow")
 		
 		/** <div style="color:#0FF;">Cyan</div> */
-		case object Cyan extends Value
+		val Cyan = new Value("Cyan")
 		
 		/** <div style="color:#F0F;">Magenta</div> */
-		case object Magenta extends Value
+		val Magenta = new Value("Magenta")
 		
 		/** <div style="color:#000;">Black</div> */
-		case object Black extends Value
+		val Black = new Value("Black")
+		
+		
+		val values = Seq(Red, Green, Blue, Yellow, Cyan, Magenta, Black)
 	}
 }
 
@@ -117,9 +122,29 @@ import com.rayrobdod.imageManipulator.operations.ChangeColor.Colors
  * 
  * @author Raymond Dodge
  * @version 2012 Jun 19
+ * @version 2013 Feb 05 - now using trait LocalReplacement
  */
-final class ColorChangeImageOp(val from:Colors.Value, val to:Colors.Value) extends NoResizeBufferedImageOp
+final class ColorChangeImageOp(val from:Colors.Value, val to:Colors.Value) extends NoResizeBufferedImageOp with LocalReplacement 
 {
+	override def createCompatibleDestImage(src:BufferedImage, cm:java.awt.image.ColorModel) = {
+		new BufferedImage(src.getWidth, src.getHeight, 
+			if (src.getAlphaRaster() != null ) // if there is an alpha component
+			{
+				BufferedImage.TYPE_INT_ARGB
+			}
+			else if (Colors.Black == to)
+			{
+				BufferedImage.TYPE_BYTE_GRAY
+			}
+			else
+			{
+				BufferedImage.TYPE_INT_RGB
+			}
+		)
+	}
+	
+	
+	
 	/**
 	 * @param a RGB value
 	 */
@@ -218,17 +243,8 @@ final class ColorChangeImageOp(val from:Colors.Value, val to:Colors.Value) exten
 		}
 	}
 	
-	def filter(src:BufferedImage, x:BufferedImage) = {
-		val dst = Option(x).getOrElse(createCompatibleDestImage(src, null))
-		if (!(dst.getWidth == src.getWidth && src.getHeight == dst.getHeight)) throw new IllegalArgumentException
-		
-		(0 until src.getWidth).foreach{(x:Int) => 
-		(0 until src.getHeight).foreach{(y:Int) =>
-			dst.setRGB(x, y, changePixel(src.getRGB(x, y)).getRGB)
-			// TODO: transparency
-		}}
-		
-		dst
+	def pixelReplaceFunction(src:BufferedImage, dst:BufferedImage, x:Int) = {
+		{{(y:Int) => dst.setRGB(x, y, changePixel(src.getRGB(x, y)).getRGB)}}
 	}
 	
 	def getRenderingHints() = null

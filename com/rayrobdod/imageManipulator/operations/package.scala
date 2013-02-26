@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2012, Raymond Dodge
+	Copyright (c) 2012-2013, Raymond Dodge
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -42,16 +42,45 @@ package object operations
 	trait NoResizeBufferedImageOp extends BufferedImageOp
 	{
 		override def createCompatibleDestImage(src:BufferedImage, cm:java.awt.image.ColorModel) = {
-			new BufferedImage(src.getWidth, src.getHeight, BufferedImage.TYPE_INT_ARGB)
+			new BufferedImage(src.getWidth, src.getHeight, src.getType)
 		}
 		
-		override def getBounds2D(src:BufferedImage) = new java.awt.Rectangle(src.getWidth, src.getHeight)
+		override final def getBounds2D(src:BufferedImage) = new java.awt.Rectangle(src.getWidth, src.getHeight)
 
-		override def getPoint2D(in:Point2D, out:Point2D) = {
+		override final def getPoint2D(in:Point2D, out:Point2D) = {
 			val returnValue = Option(out).getOrElse(new Point2D.Double)
 			returnValue.setLocation(in)
 			returnValue
 		}
-
+	}
+	
+	/**
+	 * A trait that defines a filter method in which a single pass
+	 * through an image is used to set pixels
+	 * 
+	 * @author Raymond Dodge
+	 * @version 2013 Feb 05
+	 * @note Seq.par exists. It can speed things up slightly noticably. However, it would be the only use
+				of parellel collections in the program. It would be a difference of at about 120KB, 
+				or nearly 28% of the program's size.
+	 */
+	trait LocalReplacement extends NoResizeBufferedImageOp
+	{
+		def pixelReplaceFunction(src:BufferedImage, dst:BufferedImage, x:Int):Function1[Int,Any]
+		
+		override final def filter(src:BufferedImage, x:BufferedImage) = {
+			val dst = Option(x).getOrElse(createCompatibleDestImage(src, null))
+			if (!(dst.getWidth == src.getWidth && src.getHeight == dst.getHeight)) throw new IllegalArgumentException
+			
+			if (dst.getAlphaRaster != null && src.getAlphaRaster != null)
+				dst.getAlphaRaster().setRect(src.getAlphaRaster());
+			
+			(0 until src.getWidth).foreach{(x:Int) => 
+			(0 until src.getHeight).foreach{
+				pixelReplaceFunction(src, dst, x)
+			}}
+			
+			dst
+		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2012, Raymond Dodge
+	Copyright (c) 2012-2013, Raymond Dodge
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -59,17 +59,18 @@ final class Transparentify extends Operation
  * that color are turned into transparent pixels
  * @author Raymond Dodge
  * @version 2012 Jun 19
+ * @version 2013 Feb 05 - now using trait LocalReplacement
  */
-final class TransparentifyImageOp(val maskColor:Color) extends NoResizeBufferedImageOp
+final class TransparentifyImageOp(val maskColor:Color) extends NoResizeBufferedImageOp with LocalReplacement
 {
 	def this(maskRGB:Int) = this(new Color(maskRGB))
 	
-	def filter(src:BufferedImage, x:BufferedImage) = {
-		val dst = Option(x).getOrElse(createCompatibleDestImage(src, null))
-		if (!(dst.getWidth == src.getWidth && src.getHeight == dst.getHeight)) throw new IllegalArgumentException
-		
-		(0 until src.getWidth).foreach{(x:Int) => 
-		(0 until src.getHeight).foreach{(y:Int) =>
+	override def createCompatibleDestImage(src:BufferedImage, cm:java.awt.image.ColorModel) = {
+		new BufferedImage(src.getWidth, src.getHeight, BufferedImage.TYPE_INT_ARGB)
+	}
+	
+	def pixelReplaceFunction(src:BufferedImage, dst:BufferedImage, x:Int) = {
+		{{(y:Int) =>
 			dst.setRGB(x, y, src.getRGB(x, y))
 			
 			if (src.getRGB(x,y) == maskColor.getRGB)
@@ -77,8 +78,6 @@ final class TransparentifyImageOp(val maskColor:Color) extends NoResizeBufferedI
 				dst.getAlphaRaster.setPixel(x,y,Array(0,0,0,0,0,0))
 			}
 		}}
-		
-		dst
 	}
 	
 	def getRenderingHints() = null

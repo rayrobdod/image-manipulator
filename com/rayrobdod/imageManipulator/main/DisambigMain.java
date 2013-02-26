@@ -24,25 +24,26 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
-package com.rayrobdod.imageManipulator;
-
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.imageio.ImageIO;
+package com.rayrobdod.imageManipulator.main;
 
 /**
- * A singleton that create a FileFilter that matches all files readable by ImageIO
+ * A main method for the image manipulator program
  * 
  * @author Raymond Dodge
- * @version 2012 Aug 16
- * @since 1.0.1
+ * @version 2013 Feb 25
  */
-public class AllImageFormatsFilter
+public class DisambigMain
 {
-	private AllImageFormatsFilter() {}
-	private static FileFilter item = new FileNameExtensionFilter(
-			"All Image Formats", ImageIO.getReaderFileSuffixes()); 
+	private DisambigMain() {}
 	
-	public static FileFilter item() {return item;}
+	public static final void main(String[] args)
+	{
+		if (System.getProperty("os.name").contains("Windows") &&
+				System.getProperty("os.version").compareTo("6.1") >= 0)
+		{
+			Win7Main.main(args);
+		} else {
+			Main.main(args);
+		}
+	}
 }

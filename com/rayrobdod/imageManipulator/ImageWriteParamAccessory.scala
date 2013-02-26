@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2012, Raymond Dodge
+	Copyright (c) 2012-2013, Raymond Dodge
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -29,11 +29,16 @@ package com.rayrobdod.imageManipulator
 import java.beans.{PropertyChangeEvent, PropertyChangeListener}
 import java.awt.event.{ActionEvent, ActionListener}
 import javax.swing.{JPanel, JSlider, JFileChooser,
-			JComboBox, JLabel, JCheckBox}
-import javax.swing.event.{ChangeEvent, ChangeListener}
+			JComboBox, JLabel, JCheckBox, JTextField}
+import java.awt.{GridBagConstraints, GridBagLayout, GridLayout}
+import javax.swing.event.{ChangeEvent, ChangeListener,
+			DocumentEvent, DocumentListener}
 import javax.swing.filechooser.FileFilter
 import javax.imageio.ImageWriteParam
 import javax.imageio.spi.ImageWriterSpi
+import com.rayrobdod.swing.GridBagConstraintsFactory
+import javax.swing.BorderFactory.{createEmptyBorder => EmptyBorder}
+import javax.swing.SwingUtilities.{invokeLater => invokeOnAWT}
 
 /**
  * A component that shows options useful for configuring an ImageWriteParam
@@ -42,6 +47,7 @@ import javax.imageio.spi.ImageWriterSpi
  * 
  * @author Raymond Dodge
  * @version 2012 Dec 27-28
+ * @version 20123 Feb 24 CustomAccessory
  */
 class ImageWriteParamAccessory(
 		fileFiltersToSPI:Map[FileFilter, ImageWriterSpi]
@@ -51,6 +57,7 @@ class ImageWriteParamAccessory(
 	def p = _p;
 	def p_=(p:Option[ImageWriteParam]) = {_p = p;
 		CompressionAccessory.prepareParam(_p);
+		CustomAccessory.prepareParam(_p);
 	}
 	
 	object CompressionAccessory extends JPanel
@@ -148,8 +155,126 @@ class ImageWriteParamAccessory(
 	CompressionAccessory.levelSlider.setEnabled(false)
 	CompressionAccessory.typeBox.setEnabled(false)
 	CompressionAccessory.useCompression.setEnabled(false)
-	this.add(CompressionAccessory)
 	
+	
+	// WOO! REFLECTION
+	object CustomAccessory extends JPanel
+	{
+		private val myLabel = new JLabel("Others:")
+		CustomAccessory.this.add(myLabel)
+		CustomAccessory.this.setLayout(new java.awt.GridLayout(0,1))
+		
+		def prepareParam(p:Option[ImageWriteParam]) {
+			invokeOnAWT(new Runnable() { def run() {
+			
+				p.map{(p2:ImageWriteParam) => 
+					CustomAccessory.this.removeAll()
+					CustomAccessory.this.add(myLabel)
+					
+					val methods = p2.getClass.getMethods
+					methods.filter{(m:java.lang.reflect.Method) =>
+						// setters that are not included in the base classes
+						m.getName.startsWith("set") &&
+								m.getDeclaringClass() != classOf[javax.imageio.IIOParam] &&
+								m.getDeclaringClass() != classOf[javax.imageio.ImageWriteParam]
+					}.foreach{(m:java.lang.reflect.Method) =>
+						val valueName = m.getName.drop(3)
+						val STRING_TYPE = classOf[java.lang.String]
+						
+						if (1 == m.getParameterTypes.length) {
+							m.getParameterTypes()(0) match {
+								case java.lang.Boolean.TYPE => {
+									val checkbox = new JCheckBox(valueName)
+									
+									CustomAccessory.this.add(checkbox)
+									checkbox.addActionListener(new ActionListener{
+										def actionPerformed(e:ActionEvent) {
+											m.invoke(p2, checkbox.isSelected:java.lang.Boolean);
+										}
+									})
+									
+									try {
+										val setValue = p2.getClass.getMethod("is" + valueName).invoke(p2);
+										
+										checkbox.setSelected(setValue match {
+											case x:java.lang.Boolean => x
+										})
+										
+										
+									} catch {
+										case e:NoSuchMethodException => { 
+											try {
+												val setValue = p2.getClass.getMethod("get" + valueName).invoke(p2);
+												
+												checkbox.setSelected(setValue match {
+													case x:java.lang.Boolean => x
+												})
+												
+											} catch {
+												case e2:NoSuchMethodException => {
+													m.invoke(p2, false:java.lang.Boolean);
+												}
+											}
+										}
+									}
+								}
+								case STRING_TYPE => {
+									val label = new JLabel(valueName + ": ")
+									val textbox = new JTextField(15)
+									
+									CustomAccessory.this.add({
+										val p = new JPanel(new GridLayout(0,1))
+										p.add(label)
+										p.add(textbox)
+										p
+									})
+									
+									textbox.getDocument.addDocumentListener(new DocumentListener{
+										def changedUpdate(e:DocumentEvent) {
+											m.invoke(p2, textbox.getText);
+										}
+										def insertUpdate(e:DocumentEvent) {
+											m.invoke(p2, textbox.getText);
+										}
+										def removeUpdate(e:DocumentEvent) {
+											m.invoke(p2, textbox.getText);
+										}
+									})
+									
+									try {
+										val setValue = p2.getClass.getMethod("get" + valueName).invoke(p2);
+										
+										textbox.setText(setValue.toString)
+										
+									} catch {
+										case e2:NoSuchMethodException => {
+											m.invoke(p2, "");
+										}
+									}
+								}
+								case _ => {}
+							}
+						}
+					}
+				}
+				
+				ImageWriteParamAccessory.this.validate()
+			}})
+		}
+	}
+	
+	private val partGridBag = GridBagConstraintsFactory(
+		gridwidth = GridBagConstraints.REMAINDER,
+		weightx = 1,
+		fill = GridBagConstraints.BOTH
+	)
+	
+	this.setLayout(new GridBagLayout)
+	this.add(CompressionAccessory, partGridBag)
+	this.add(CustomAccessory, partGridBag)
+	this.setAlignmentY(1)
+	
+
 	
 	
 	def propertyChange(e:PropertyChangeEvent) {
@@ -157,7 +282,8 @@ class ImageWriteParamAccessory(
 		
 		if (JFileChooser.FILE_FILTER_CHANGED_PROPERTY.equals(prop)) {
 			e.getNewValue match {
-				case x:FileFilter => this.p = fileFiltersToSPI.lift(x).map{_.createWriterInstance.getDefaultWriteParam};
+				case x:FileFilter => this.p = (fileFiltersToSPI.lift(x).map{_.createWriterInstance.getDefaultWriteParam});
+				
 				// if null, then the All Files file filter is being used, which only
 				// shows up in the Open File dialog. Thus, the Save Dialog thing has ended,
 				// and this no longer needs to care.
@@ -166,8 +292,6 @@ class ImageWriteParamAccessory(
 					case y:JFileChooser => y.removePropertyChangeListener(this)  
 				}
 			}
-			
-			repaint();
 		}
 	}
 }

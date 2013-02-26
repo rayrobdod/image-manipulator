@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2012, Raymond Dodge
+	Copyright (c) 2012-2013, Raymond Dodge
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -49,6 +49,7 @@ import scala.collection.JavaConversions.asScalaIterator
  * @version 2012 Sept 10 - changes due to change in signature of SwingSaveAndLoadListener.fileChooser
  * @version 2012 Nov 19 - making use ImageWriterSpis directly instead of indirect extension usage
  * @version 2012 Dec 27 - set the chooser's accessory to a component that will modify the ImageWriteParams
+ * @version 2013 Feb 24 - make accessory reflect first filefilter shown upon first showing
  */
 class SwingSaveListener(val getImage:Function0[RenderedImage]) extends ActionListener
 {
@@ -70,8 +71,11 @@ class SwingSaveListener(val getImage:Function0[RenderedImage]) extends ActionLis
 		fileFilters.foreach{chooser.addChoosableFileFilter(_)}
 		
 		val acc = new ImageWriteParamAccessory(fileFiltersToSPI)
-		chooser.setAccessory(acc)
+		chooser.setAccessory(new javax.swing.JScrollPane(acc,
+				javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER))
 		chooser.addPropertyChangeListener(acc)
+		acc.p = Some(fileFiltersToSPI.head._2.createWriterInstance.getDefaultWriteParam)
 		
 		val returnVal = chooser.showSaveDialog(null);
 		

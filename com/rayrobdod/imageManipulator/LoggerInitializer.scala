@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2012, Raymond Dodge
+	Copyright (c) 2012-2013, Raymond Dodge
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,11 @@ import java.util.logging.{Logger, Level, ConsoleHandler,
  */
 private[imageManipulator] object LoggerInitializer
 {
-//	val warningFileHandler = new FileHandler("%t/imageManipulator%g.log")
+	val finerConsoleHander = new ConsoleHandler()
+	finerConsoleHander.setLevel(Level.INFO)
+	val warningConsoleHander = new ConsoleHandler()
+	warningConsoleHander.setLevel(Level.WARNING)
+	val warningFileHandler = new FileHandler("%t/imageManipulator%g.log")
 	val allSwingHandler = new SwingWindowHandler
 	try {
 		allSwingHandler.setLevel(Level.WARNING)
@@ -50,6 +54,11 @@ private[imageManipulator] object LoggerInitializer
 			"com.rayrobdod.imageManipulator.JavaWSSaveListener")
 	javaWSSaveLogger.addHandler(allSwingHandler)
 	javaWSSaveLogger.setLevel(Level.WARNING)
+	
+	val Win7MainLogger = Logger.getLogger(
+			"com.rayrobdod.imageManipulator.main.Win7Main")
+	Win7MainLogger.addHandler(finerConsoleHander)
+	Win7MainLogger.setLevel(Level.WARNING)
 }
 
 /**

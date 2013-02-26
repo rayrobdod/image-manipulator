@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2012, Raymond Dodge
+	Copyright (c) 2012-2013, Raymond Dodge
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,7 @@
 package com.rayrobdod.imageManipulator
 
 import java.awt.event.{ActionListener, ActionEvent}
-import javax.swing.JFileChooser
+import javax.swing.{JFileChooser, JOptionPane}
 import javax.imageio.ImageIO
 import javax.swing.filechooser.{FileNameExtensionFilter, FileFilter}
 import java.awt.image.{RenderedImage, BufferedImage}
@@ -49,6 +49,7 @@ import scala.collection.JavaConversions.asScalaIterator
  * @version 2012 Sept 10 - changes due to change in signature of SwingSaveAndLoadListener.fileChooser
  * @version 2012 Nov 19 - making use ImageReaderSpis directly instead of indirect extension usage
  * @version 2012 Dec 27 - clears the chooser's accessory before showing it
+ * @version 2013 Feb 06 - Dialog appears when an invalid file is selected
  */
 class SwingLoadListener(val setImage:Function1[BufferedImage, Any]) extends ActionListener
 {
@@ -74,7 +75,16 @@ class SwingLoadListener(val setImage:Function1[BufferedImage, Any]) extends Acti
 			{
 				val image:BufferedImage = ImageIO.read(chooser.getSelectedFile())
 				
-				setImage(image)
+				if (image != null) {
+					setImage(image)
+				} else {
+					JOptionPane.showMessageDialog(null,
+							"This application does not support the specified file's image format",
+							"Unknown File Type",
+							JOptionPane.ERROR_MESSAGE
+					
+					)
+				}
 			}
 			catch
 			{
@@ -104,7 +114,7 @@ object SwingSaveAndLoadListener
 	 */
 	val fileChooser:Option[JFileChooser] = {
 		try {
-			Some(new JFileChooser)
+			Some(new JFileChooser).filter{Function.const(! java.awt.GraphicsEnvironment.isHeadless())}
 		} catch {
 			case x:java.security.AccessControlException => None
 		}

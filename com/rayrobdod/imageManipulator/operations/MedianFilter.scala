@@ -36,24 +36,15 @@ import java.awt.event.{ActionEvent, ActionListener}
 import javax.swing.event.{ChangeEvent, ChangeListener}
 
 /**
- * Turns an image into a two-tone image by taking grayscale values
- * and comparing it with a threshold: if the value is greater than
- * the threshold, the pixel becomes black; otherwise the pixel becomes
- * white
  * 
  * @author Raymond Dodge
- * @version 19 Jun 2012
+ * @version 2013 Feb 06
  */
-final class TwoTone extends Operation
+final class MedianFilter extends Operation
 {
-	override val name = "Two-Tone"
+	override val name = "Median Filter"
 	
-	val divider = {
-		val returnVal = new JSlider(0,255,128)
-		returnVal.setMinorTickSpacing(16);
-		returnVal.setPaintTicks(true);
-		returnVal
-	}
+	val divider = new JSlider(1,7,1)
 	
 	override def setup(
 				panel:javax.swing.JPanel,
@@ -70,37 +61,57 @@ final class TwoTone extends Operation
 				
 	override def apply(src:BufferedImage):BufferedImage =
 	{
-		new TwoToneImageOp(divider.getValue).filter(src, null)
+		new MedianFilterImageOp(divider.getValue * 2 + 1).filter(src, null)
 	}
 }
 
 /**
- * Turns an image into a two-tone image by taking grayscale values
- * and comparing it with a threshold: if the value is greater than
- * the threshold, the pixel becomes black; otherwise the pixel becomes
- * white
+ * Performs a MedianFilter on an image
  * 
  * @author Raymond Dodge
- * @version 19 Jun 2012
- * @version 2013 Feb 05 - now using trait LocalReplacement
+ * @version 2013 Feb 06
+ * @param windowSize the size of the window to take the median of
  */
-final class TwoToneImageOp(val threshold:Int) extends NoResizeBufferedImageOp with LocalReplacement
+final class MedianFilterImageOp(val windowSize:Int) extends NoResizeBufferedImageOp with LocalReplacement
 {
-	override def createCompatibleDestImage(src:BufferedImage, cm:java.awt.image.ColorModel) = {
-		new BufferedImage(src.getWidth, src.getHeight, BufferedImage.TYPE_BYTE_BINARY)
-	}
-	
 	def pixelReplaceFunction(src:BufferedImage, dst:BufferedImage, x:Int) = {
 		{{(y:Int) =>
-			val srcColor = new Color(src.getRGB(x,y))
-			val tone = (srcColor.getRed() + srcColor.getGreen() + srcColor.getBlue()) / 3 
+        	val startX = math.max(0, x - windowSize/2)
+			val startY = math.max(0, y - windowSize/2)
+			val widthX = math.min(src.getWidth  - x, windowSize)
+			val widthY = math.min(src.getHeight - y, windowSize)
 			
-			if (tone > threshold)
-				dst.setRGB(x, y, Color.white.getRGB)
-			else
-				dst.setRGB(x, y, Color.black.getRGB)
+			val sortedRgbs:Seq[Int] = try {
+				val rgbs = src.getRGB(startX, startY, widthX, widthY, null, 0, widthX);
+				rgbs.sorted(AverageGreyscaleColorOrdering.on[Int]{(i:Int) => new Color(i)})
+			} catch {
+				case x:java.lang.ArrayIndexOutOfBoundsException => {
+						System.out.println(src.getWidth, src.getHeight, startX, startY, widthX, widthY, src.getRGB(startX + widthX, startY + widthY))
+						Seq(0xFF00FFFF)
+				}
+			}
+			
+			dst.setRGB(x,y, sortedRgbs(sortedRgbs.size/2));
 		}}
 	}
 	
 	def getRenderingHints() = null
 }
+
+
+
+object AverageGreyscaleColorOrdering extends Ordering[Color] {
+	override def compare(a:Color, b:Color) = {
+		(a.getRed + a.getGreen + a.getBlue) compareTo
+				(b.getRed + b.getGreen + b.getBlue)
+	}
+}
+
+/*
+object LuminocityGreyscaleColorOrdering extends Ordering[Color] {
+	override def compare(a:Color, b:Color) = {
+		(0.2126 * a.getRed + 0.7152 * a.getGreen + 0.0722 * a.getBlue) compareTo
+				(0.2126 * b.getRed + 0.7152 * b.getGreen + 0.0722 * b.getBlue)
+	}
+}
+*/

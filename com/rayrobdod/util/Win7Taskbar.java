@@ -6,6 +6,9 @@ public class Win7Taskbar
 {
 	public static native int setCurrentProcessAppID(final String appID);
 	
+	/** 
+	 * @pre the frame is visible
+	 */
 	public static native int setRelaunchCommand(Frame window, String appID, String command, String displayName);
 	
 	static {
@@ -14,6 +17,6 @@ public class Win7Taskbar
 		System.loadLibrary("KERNEL32");
 		System.loadLibrary("SHELL32");
 		System.loadLibrary("SHLWAPI");
-		System.load("C:/Users/Raymond/Documents/Programming/Java/Image Manipulator/com_rayrobdod_util_Win7Taskbar.dll");
+		System.load("C:/Users/Raymond/Documents/Programming/Java/classes/com_rayrobdod_util_Win7Taskbar.dll");
 	}
 }

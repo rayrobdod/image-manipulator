@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2012, Raymond Dodge
+	Copyright (c) 2012-2013, Raymond Dodge
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -35,8 +35,9 @@ import java.awt.image.{BufferedImage, BufferedImageOp}
  * @author Raymond Dodge
  * @version 2012 Jun 18
  * @version 2012 Jun 19 - moved from com.rayrobdod.imageManipulator.manipulations to com.rayrobdod.imageManipulator.operations
+ * @version 2013 Feb 05 - now using trait LocalReplacement
  */
-final class Identity extends Operation with NoResizeBufferedImageOp 
+final class Identity extends Operation with NoResizeBufferedImageOp with LocalReplacement 
 {
 	override val name = "Identity"
 	
@@ -45,16 +46,8 @@ final class Identity extends Operation with NoResizeBufferedImageOp
 	
 	override def apply(inputImage:BufferedImage):BufferedImage = filter(inputImage, null)
 	
-	def filter(src:BufferedImage, x:BufferedImage) = {
-		val dst = Option(x).getOrElse(createCompatibleDestImage(src, null))
-		if (!(dst.getWidth == src.getWidth && src.getHeight == dst.getHeight)) throw new IllegalArgumentException
-		
-		(0 until src.getWidth).foreach{(x:Int) => 
-		(0 until src.getHeight).foreach{(y:Int) =>
-			dst.setRGB(x, y, src.getRGB(x, y))
-		}}
-		
-		dst
+	def pixelReplaceFunction(src:BufferedImage, dst:BufferedImage, x:Int) = {
+		{{(y:Int) => dst.setRGB(x, y, src.getRGB(x, y))}}
 	}
 	
 	def getRenderingHints() = null

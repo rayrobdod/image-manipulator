@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2012, Raymond Dodge
+	Copyright (c) 2012-2013, Raymond Dodge
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@ import java.awt.event.{ActionListener, ActionEvent}
 import java.awt.image.{BufferedImage, RenderedImage}
 import javax.swing.{JLabel, JPanel, JButton, JComboBox, JFrame, ImageIcon}
 import java.awt.image.BufferedImage.{TYPE_INT_ARGB => alpha}
+import com.rayrobdod.swing.GridBagConstraintsFactory
 
 /**
  * A frame that holds the common elements of the image conversions
@@ -41,6 +42,7 @@ import java.awt.image.BufferedImage.{TYPE_INT_ARGB => alpha}
  * @version 2012 Jun 18-19
  * @version 2012 Sept 09 - added 16x16 image icon to frame
  * @version 2012 Sept 10 - modified to use SaveAndLoadListeners
+ * @version 2013 Feb 06 - GridBagConstraintsRemainder is now a val, not an object
  * @todo make preview operations work on scaled instances
  */
 class ImageManipulateFrame extends JFrame
@@ -120,10 +122,7 @@ class ImageManipulateFrame extends JFrame
 	modeChooser.addActionListener(UpdateImageActionListener)
 	modeChooser.addActionListener(SetupCustomModeArea)
 	
-	object GridBagConstraintsRemainder extends GridBagConstraints
-	{
-		gridwidth = GridBagConstraints.REMAINDER
-	}
+	private val GridBagConstraintsRemainder = GridBagConstraintsFactory(gridwidth = GridBagConstraints.REMAINDER)
 	
 	setLayout(new GridBagLayout)
 	add(originalImageLabel, new GridBagConstraints)

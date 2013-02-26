@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2012, Raymond Dodge
+	Copyright (c) 2012-2013, Raymond Dodge
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,7 @@ package com.rayrobdod.imageManipulator.main;
 import com.rayrobdod.imageManipulator.ImageManipulateFrame;
 import javax.swing.JFrame;
 import com.rayrobdod.util.Win7Taskbar;
+import java.util.logging.Logger;
 
 /**
  * A main method for the image manipulator program
@@ -37,24 +38,47 @@ import com.rayrobdod.util.Win7Taskbar;
  * @version 2012 Jun 18
  * @version 2012 Sept 08 - transcribed directly from scala with no changes
  * @version 2012 Sept 09 - remarking as public. 
+ * @version 2013 Jan 10-11 - Win7Taskbar seems to work; not trying to get this to work on top of that
  */
 public class Win7Main
 {
 	private Win7Main() {}
 	
+	public static final String appID = "Rayrobdod.ImageManipulator.build_0004";
+	public static final String name = "Image Manipulator build_0004";
+	private static final Logger logger = com.rayrobdod.imageManipulator.LoggerInitializer.Win7MainLogger();
+	
 	public static final void main(String[] args)
 	{
-		Win7Taskbar.setCurrentProcessAppID("Rayrobdod.ImageManipulator");
+		Win7Taskbar.setCurrentProcessAppID(appID);
 		
 		JFrame frame = new ImageManipulateFrame();
-		
-//		System.out.println(
-//			Win7Taskbar.setRelaunchCommand(frame, "Rayrobdod.ImageManipulator", "javaw com.rayrobdod.imageManipulator.main.Win7Main", "Image Manipulator")
-//		);
-		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setLocationByPlatform(true);
+		
+		String myPath = "";
+		try {
+			String tmp = Win7Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+			myPath = java.net.URLDecoder.decode(tmp, "UTF-8");
+			// serialize to work with system commands
+			myPath = new java.io.File(myPath).toString();
+		} catch (java.io.UnsupportedEncodingException e) {
+			logger.warning("Apparently, this system doesn't support UTF-8");
+			e.printStackTrace();
+		}
+		logger.info("Path: " + myPath);
+		
 		frame.setVisible(true);
+		// This has to be called on a visible frame to work
+		if (! myPath.equals("") ) {
+			String command = "javaw -jar " + myPath;
+			logger.info("Relaunch command: " + command);
+			
+			Win7Taskbar.setRelaunchCommand(frame, appID, command, name);
+			
+		} else {
+			logger.info("Not setting relaunch command");
+		}
 	}
 }

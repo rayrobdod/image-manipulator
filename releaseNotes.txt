@@ -1,5 +1,12 @@
 ﻿imageManipulator
 
+== 1.0.4 ==
+> Removing "Rescale" and replacing with "Contrast Stretch"
+> Adding "Median Filter"
+
+> Operations usually smarter about saved image degree
+> Can now set 'miscilanious' writing parameters
+
 == 1.0.3 ==
 > Allowing access to ImageWriter's compression options
 

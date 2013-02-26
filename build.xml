@@ -1,23 +1,26 @@
-<project name="ImageManipulator" default="jars" basedir="C:/Users/Raymond/Documents/Programming/Java">
+<project name="Image Manipulator" default="jars" basedir="C:/Users/Raymond/Documents/Programming/Java">
 	<description />
 	
-	<property name="classfiles" value="**/*.class META-INF/** releaseNotes.txt rayrobdod?license.txt **/*.png" />
-	<property name="sourcefiles" value="**/*.java **/*.scala build.xml mini-full.proguard micro-full.proguard" />
+	<property name="classfiles" value="**/*.class META-INF/** releaseNotes.txt rayrobdod?license.txt **/*.png *.dll" />
+	<property name="sourcefiles" value="**/*.java **/*.scala build.xml *.proguard *.cpp *.h" />
 	
 	<property name="tmp" value="C:/Users/Raymond/AppData/Local/Temp" />
-	<property name="scala-lib" location="C:/Program Files/Scala/scala-2.9.1.final/lib/scala-library.jar" />
-	<property name="scala-comp" location="C:/Program Files/Scala/scala-2.9.1.final/lib/scala-compiler.jar" />
+	<property name="scala" location="C:/Program Files/Scala/scala-2.9.1.final/lib/" />
+	<!-- property name="scala" location="C:/Users/Raymond/Downloads/Unused Programs/scala-2.9.3-RC1/lib/" / -->
+	<property name="scala-lib"   location="${scala}/scala-library.jar" />
+	<property name="scala-comp"  location="${scala}/scala-compiler.jar" />
 	<property name="javaws" location="C:\Program Files\Java\jdk1.7.0_07\jre\lib\javaws.jar" />
-	<!-- property name="anonFunReduce" value="-Xplugin:C:/Users/Raymond/Documents/Programming/Java/ScalaParserPlugin/CommonAnonFuns.zip" / -->
-	<property name="anonFunReduce" value="" />
+	<property name="anonFunReduce" value="-Xplugin:C:/Users/Raymond/Documents/Programming/Java/ScalaParserPlugin/2.9.1/CommonAnonFuns.zip" />
+	<!-- property name="anonFunReduce" value="" / -->
 	
-	<property name="version" value="1.0.3" />
+	<property name="version" value="1.0.4" />
 	<!-- property name="myClasses" location="classes" / -->
-	<property name="jarNamePattern" location="C:/Users/Raymond/Documents/website/programming/java/programs/imageManipulator/${version}/imageManipulator-${version}-" />
+	<!-- property name="jarNamePattern" location="C:/Users/Raymond/Documents/website/programming/java/programs/imageManipulator/${version}/imageManipulator-${version}-" / -->
 	
 	<property name="myClasses" location="${tmp}/antBuild/classes/" />
 	<property name="javaGen" location="${tmp}/antBuild/javaGen/" />
-	<!-- property name="jarNamePattern" value="${tmp}/antBuild/jars/" / -->
+	<property name="jarNamePattern" value="${tmp}/antBuild/jars/" />
+	<property name="website" value="${tmp}/antBuild/dist/imageManipulator-${version}-" />
 	
 	<path id="myClasspath">
 		<pathelement location="${scala-lib}" />
@@ -48,6 +51,43 @@
 		<taskdef resource="proguard/ant/task.properties"
 			classpath="C:\Users\Raymond\Downloads\proguard4.8\lib\proguard.jar" />
 		
+			
+		<macrodef name="makeemptyclassfile" description="Make an empty class file so that a file will only compile once">
+			<attribute name="className"/>
+			<attribute name="directory" default="" /> <!-- using '\'s -->
+			<attribute name="package" default="" /> <!-- using '.'s -->
+			
+			<sequential>
+				<mkdir dir="${javaGen}\@{directory}"/>
+				<condition property="makeemptyfile.file-@{package}.@{className}" value="${javaGen}\blank.java" else="${javaGen}\@{directory}\@{className}.java">
+				<and>
+					<resourceexists>
+						<file file="${javaGen}\@{directory}\@{className}.java"/>
+					</resourceexists>
+					<uptodate srcfile="${javaGen}\@{directory}\@{className}.java" targetfile="${myClasses}\@{directory}\@{className}.class" />
+				</and>
+				</condition>
+				<condition property="makeemptyfile.directory-@{package}.@{className}" value="" else="@{directory}\"> 
+					<equals arg1="" arg2="@{directory}" />
+				</condition>
+				<condition property="makeemptyfile.package-@{package}.@{className}" value="" else="package @{package};"> 
+					<equals arg1="" arg2="@{package}" />
+				</condition>
+				
+				
+				
+				<echo file="${makeemptyfile.file-@{package}.@{className}}">
+					${makeemptyfile.package-@{package}.@{className}}
+					public class @{className} {}
+				</echo>
+				<javac destdir="${myClasses}" sourcepath="${javaGen}"
+						srcdir="${javaGen}" includeAntRuntime="false">
+					<include name="${makeemptyfile.directory-@{package}.@{className}}@{className}.java" />
+				</javac>
+			</sequential>
+		</macrodef>
+			
+			
 		<!-- create desitination directory -->
 		<mkdir dir="${myClasses}"/>
 		<mkdir dir="${javaGen}"/>
@@ -65,16 +105,16 @@
 		</javac>
 		<copy todir="${myClasses}" >
 			<fileset dir="Image Manipulator">
-				<exclude name="**/*.proguard"/>
 			</fileset>
 		</copy>
 	</target>
 
-	<target name="class-utilities" description="compile helper files" depends="init" >
+	<target name="class-utilities" description="compile helper files" depends="init,class-anonFunReduce" > <!-- ,class-native -->
 		<scalac destdir="${myClasses}" sourcepath="Utilities"
 					srcdir="Utilities" classpathref="myClasspath"
 					encoding="UTF-8" addparams="${anonFunReduce}" >
 			<include name="com/rayrobdod/swing/ScalaSeqListModel.scala" />
+			<include name="com/rayrobdod/swing/GridBagConstraintsFactory.scala" />
 		</scalac>
 		<javac destdir="${myClasses}" sourcepath="Utilities"
 				srcdir="Utilities" classpathref="myClasspath"
@@ -87,22 +127,59 @@
 			<fileset dir="Utilities">
 				<include name="com/rayrobdod/swing/ScalaSeqListModel.scala" />
 				<include name="com/rayrobdod/util/Win7Taskbar.java" />
+				<include name="com/rayrobdod/swing/GridBagConstraintsFactory.scala" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="class-native" description="Compile JNI stuff" >
+		<exec executable="C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\amd64\cl"
+				dir="${javaGen}">
+			<arg line="-I&quot;C:\Program Files (x86)\Java\jdk1.7.0_07\include&quot;"/>
+			<arg line="-I&quot;C:\Program Files (x86)\Java\jdk1.7.0_07\include\win32&quot;"/>
+			<arg line="-I&quot;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include&quot;"/>
+			<arg line="-I&quot;C:\Program Files\Microsoft SDKs\Windows\v7.1\Include&quot;"/>
+			<arg line="&quot;C:\Users\Raymond\Documents\Programming\C++\Java Native Interface\com_rayrobdod_util_Win7Taskbar.cpp&quot;"/>
+			<arg line="/O1"/>
+			<arg line="/EHsc"/>
+			<arg line="/LD"/>
+			<arg line="/link"/>
+			<arg line="&quot;C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\*.lib&quot;"/>
+			<arg line="&quot;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\lib\amd64\libcpmt.lib&quot;"/>
+			<arg line="&quot;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\lib\amd64\libcmt.lib&quot;"/>
+			<arg line="&quot;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\lib\amd64\oldnames.lib&quot;"/>
+		</exec>
+		
+		<copy todir="${myClasses}" >
+			<fileset dir="${javaGen}">
+				<include name="com_rayrobdod_util_Win7Taskbar.dll" />
+			</fileset>
+			<fileset dir="C:\Users\Raymond\Documents\Programming\C++\Java Native Interface\">
+				<include name="com_rayrobdod_util_Win7Taskbar.cpp" />
+				<include name="com_rayrobdod_util_Win7Taskbar.h" />
 			</fileset>
 		</copy>
 	</target>
 	
 	<!-- scalac doesn't seem to have same classpath as default 
 		Also, as of now, trading 2 anonfuns for 6+ commonfuns. Not a good deal.
-	>
+	-->
 	<target name="class-anonFunReduce" description="compile the commonAnonFuns" depends="init" >
 		<property name="anonFunReduce.src" location="C:\Users\Raymond\Documents\Programming\Java\ScalaParserPlugin\" />
 		
+		<scalac destdir="${myClasses}" sourcepath="Utilities"
+					srcdir="Utilities" classpathref="myClasspath"
+					encoding="UTF-8" >
+			<include name="com/rayrobdod/swing/NameAndIcon.scala" />
+		</scalac>
 		<scalac destdir="${myClasses}" sourcepath="${anonFunReduce.src}"
 					srcdir="${anonFunReduce.src}" classpathref="myClasspath" classpath="${scala-comp}"
 					encoding="UTF-8" >
 			<include name="CommonAnonFuns.scala" />
 		</scalac>
-	</target> <! -->
+		
+		<makeemptyclassfile className="CommonAnonFuns" />
+	</target> <!-- -->
 	
 	<target name="classes" depends="class-imageManipulator,class-utilities" />
 	<!-- end making classes -->
@@ -120,12 +197,22 @@
 		</jar>
 	</target>
 	
-	<target name="jar-full.orig.store" depends="jar-full.orig" description="creates a jar with neccessary classes" >
-		<zip destfile="${javaGen}/full-orig-store.jar" compress="false">
-			<zipfileset src="${jarNamePattern}full-orig.jar" />
-		</zip>
-		
-		<gzip src="${javaGen}/full-orig-store.jar" destfile="${jarNamePattern}full-orig.jar.gz"/>
+	<target name="jar-mini.orig" depends="jar-full.orig" description="creates a jar with neccessary classes" >
+		<proguard configuration="Image Manipulator\mini.proguard">
+			-injars '${jarNamePattern}full-orig.jar'
+			-outjars '${jarNamePattern}mini-orig.jar'
+			-libraryjars '${scala-lib}'
+		</proguard>
+		<pack200 srcfile="${jarNamePattern}mini-orig.jar" repack="true" unkownAttribute="strip" />
+	</target>
+	
+	<target name="jar-micro.orig" depends="jar-full.orig" description="creates a jar with neccessary classes" >
+		<proguard configuration="Image Manipulator\micro.proguard">
+			-injars '${jarNamePattern}full-orig.jar'
+			-outjars '${jarNamePattern}micro-orig.jar'
+			-libraryjars '${scala-lib}'
+		</proguard>
+		<pack200 srcfile="${jarNamePattern}micro-orig.jar" repack="true" unkownAttribute="strip" />
 	</target>
 	
 	<target name="jar-full.orig.src" depends="classes" description="creates a jar with just the original classes, and includes the sources" >
@@ -137,14 +224,6 @@
 				<attribute name="Implementation-Version" value="${version}" />
 			</manifest>
 		</jar>
-	</target>
-	
-	<target name="jar-full.orig.src.store" depends="jar-full.orig.src" description="creates a jar with neccessary classes" >
-		<zip destfile="${javaGen}/full-orig-src-store.jar" compress="false">
-			<zipfileset src="${jarNamePattern}full-orig-src.jar" />
-		</zip>
-		
-		<gzip src="${javaGen}/full-orig-src-store.jar" destfile="${jarNamePattern}full-orig-src.jar.gz"/>
 	</target>
 	
 	<target name="jar-full.full" depends="classes" description="creates a jar with all the classes" >
@@ -159,39 +238,23 @@
 	</target>
 	
 	<target name="jar-mini.full" depends="jar-full.full" description="creates a jar with neccessary classes" >
-		<proguard configuration="Image Manipulator\mini-full.proguard">
+		<proguard configuration="Image Manipulator\mini.proguard">
 			-injars '${jarNamePattern}full-full.jar'
 			-outjars '${jarNamePattern}mini-full.jar'
 		</proguard>
 		<pack200 srcfile="${jarNamePattern}mini-full.jar" repack="true" unkownAttribute="strip" />
 	</target>
 	
-	<target name="jar-mini.full.store" depends="jar-mini.full" description="creates a jar with neccessary classes" >
-		<jar destfile="${javaGen}/mini-full-store.jar" compress="false">
-			<zipfileset src="${jarNamePattern}mini-full.jar" />
-		</jar>
-		
-		<gzip src="${javaGen}/mini-full-store.jar" destfile="${jarNamePattern}mini-full.jar.gz"/>
-	</target>
-	
 	<target name="jar-micro.full" depends="jar-full.full"
 				description="creates a jar with neccessary classes and names changed" >
-		<proguard configuration="Image Manipulator\micro-full.proguard">
+		<proguard configuration="Image Manipulator\micro.proguard">
 			-injars '${jarNamePattern}full-full.jar'
 			-outjars '${jarNamePattern}micro-full.jar'
 		</proguard>
 		<pack200 srcfile="${jarNamePattern}micro-full.jar" repack="true" unkownAttribute="strip" />
 	</target>
 	
-	<target name="jar-micro.full.store" depends="jar-micro.full" description="creates a jar with neccessary classes" >
-		<jar destfile="${javaGen}/micro-full-store.jar" compress="false">
-			<zipfileset src="${jarNamePattern}micro-full.jar" />
-		</jar>
-		
-		<gzip src="${javaGen}/micro-full-store.jar" destfile="${jarNamePattern}micro-full.jar.gz"/>
-	</target>
-	
-	<target name="jars" depends="jar-full.orig.src,jar-full.orig,jar-full.full,jar-mini.full,jar-micro.full" 
+	<target name="jars" depends="jar-full.orig.src,jar-full.orig,jar-full.full,jar-mini.full,jar-micro.full,jar-mini.orig,jar-micro.orig" 
 			description="build all jar files" >
 		
 		<copy todir="${jarNamePattern}\..\" >
@@ -201,30 +264,43 @@
 		</copy>
 	</target>
 	
-	<target name="jars-gz" depends="jar-mini.full.store,jar-micro.full.store,jar-full.orig.store,jar-full.orig.src.store"
-			description="build all jar files using a single-file gzip file rather than individual gzipping" />
+	<target name="jars-compress" depends="jars"
+			description="build all jar files using a single-file gzip file rather than individual gzipping" >
+		<macrodef name="makecompression" description="Compress files">
+			<attribute name="srcfile"/>
+			<sequential>
+				<pack200 srcfile="${jarNamePattern}@{srcfile}" repack="true" unkownAttribute="strip" />
+				
+				<jar destfile="${javaGen}/@{srcfile}.store" compress="false">
+					<zipfileset src="${jarNamePattern}@{srcfile}" />
+				</jar>
+				<gzip src="${javaGen}/@{srcfile}.store" destfile="${jarNamePattern}@{srcfile}.gz"/>
+				
+				<pack200 srcfile="${jarNamePattern}@{srcfile}" effort="9" />
+			</sequential>
+		</macrodef>
+		
+		
+		<makecompression srcfile="full-orig-src.jar" />
+		<makecompression srcfile="full-orig.jar" />
+		<makecompression srcfile="mini-orig.jar" />
+		<makecompression srcfile="micro-orig.jar" />
+		<makecompression srcfile="mini-full.jar" />
+		<makecompression srcfile="micro-full.jar" />
+	</target>
 	<!-- end making jars -->
 	
 	
-	<!-- making packs -->
-	<target name="pack" depends="jars" description="pack processing on the jar file">
-		<pack200 srcfile="${jarNamePattern}full-orig-src.jar" effort="9" />
-		<pack200 srcfile="${jarNamePattern}full-orig.jar" effort="9" />
-		<pack200 srcfile="${jarNamePattern}mini-full.jar" effort="9" />
-		<pack200 srcfile="${jarNamePattern}micro-full.jar" effort="9" />
-	</target>
-	<!-- end making packs -->
-	
-	<target name="website-prep" depends="pack,jars-gz,jars">
+	<target name="website-prep" depends="jars-compress">
 		<macrodef name="createVarFile" description="Make a var file to select between ">
 			<attribute name="file"/>
 			
 			<sequential>
-				<move file="${jarNamePattern}@{file}.jar" tofile="${jarNamePattern}@{file}.jar.identity" />
-				<move file="${jarNamePattern}@{file}.jar.gz" tofile="${jarNamePattern}@{file}.jar.gzip" />
-				<move file="${jarNamePattern}@{file}.jar.pack.gz" tofile="${jarNamePattern}@{file}.jar.pack.gzip" />
+				<copy file="${jarNamePattern}@{file}.jar" tofile="${website}@{file}.jar.identity" />
+				<copy file="${jarNamePattern}@{file}.jar.gz" tofile="${website}@{file}.jar.gzip" />
+				<copy file="${jarNamePattern}@{file}.jar.pack.gz" tofile="${website}@{file}.jar.pack.gzip" />
 				
-				<echo file="${jarNamePattern}@{file}.jar.var">URL: @{file}.jar
+				<echo file="${website}@{file}.jar.var">URL: @{file}.jar
 
 URI: @{file}.jar.identity
 Content-type: application/java-archive
@@ -242,6 +318,8 @@ Content-Encoding: pack200-gzip; q=1
 		
 		<createVarFile file="full-orig-src" />
 		<createVarFile file="full-orig" />
+		<createVarFile file="mini-orig" />
+		<createVarFile file="micro-orig" />
 		<createVarFile file="mini-full" />
 		<createVarFile file="micro-full" />
 	</target>

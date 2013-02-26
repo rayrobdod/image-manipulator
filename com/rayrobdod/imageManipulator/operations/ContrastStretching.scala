@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2012, Raymond Dodge
+	Copyright (c) 2012-2013, Raymond Dodge
 	All rights reserved.
 	
 	Redistribution and use in source and binary forms, with or without
@@ -36,11 +36,11 @@ import javax.swing.JComboBox
 /**
  * 
  * @author Raymond Dodge
- * @version 2012 Jun 19
+ * @version 2013 Feb 04
  */
-final class Rescale extends Operation
+final class ContrastStretching extends Operation
 {
-	override val name = "Rescale"
+	override val name = "Contrast Stretch"
 	
 	override def setup(
 				panel:javax.swing.JPanel,
@@ -48,51 +48,8 @@ final class Rescale extends Operation
 				
 	override def apply(src:BufferedImage):BufferedImage =
 	{
-		// TODO: input/output
-		new RescaleImageOp(0,255).filter(src, null)
+		new ContrastStretchingImageOp(0.03,0.03).filter(src, null)
 	}
 	
 }
 
-/**
- * 
- * @author Raymond Dodge
- * @version 2012 Jun 19
- */
-final class RescaleImageOp(val min:Int, val max:Int) extends NoResizeBufferedImageOp
-{
-	if (0 > min || min > max || max > 255) throw new IllegalArgumentException("The following must hold: 0 < min < max < 255")
-	
-	def filter(src:BufferedImage, x:BufferedImage) = {
-		val dst = Option(x).getOrElse(createCompatibleDestImage(src, null))
-		if (!(dst.getWidth == src.getWidth && src.getHeight == dst.getHeight)) throw new IllegalArgumentException
-		
-		val (srcMin, srcMax) = (
-			(0 until src.getWidth).foldLeft((255,0)){(minmax:(Int, Int), x:Int) => 
-			(0 until src.getHeight).foldLeft(minmax){(minmax2:(Int, Int), y:Int) =>
-				val color = new Color(src.getRGB(x,y))
-				
-				((
-					Seq(minmax2._1, color.getRed, color.getGreen, color.getBlue).min,
-					Seq(minmax2._2, color.getRed, color.getGreen, color.getBlue).max
-				))
-			}}
-		)
-		
-		(0 until src.getWidth).foreach{(x:Int) => 
-		(0 until src.getHeight).foreach{(y:Int) =>
-			val srcColor = new Color(src.getRGB(x,y))
-			val newRed   = (((srcColor.getRed.toFloat   - srcMin) / (srcMax - srcMin) * (max - min)) + min).intValue
-			val newGreen = (((srcColor.getGreen.toFloat - srcMin) / (srcMax - srcMin) * (max - min)) + min).intValue
-			val newBlue  = (((srcColor.getBlue.toFloat  - srcMin) / (srcMax - srcMin) * (max - min)) + min).intValue
-			
-			val dstColor = new Color(newRed, newGreen, newBlue)
-			
-			dst.setRGB(x, y, dstColor.getRGB())
-		}}
-		
-		dst
-	}
-	
-	def getRenderingHints() = null
-}

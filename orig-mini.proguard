@@ -1,0 +1,8 @@
+-include 'mini.proguard'
+
+-injars 'C:\Users\Raymond\AppData\Local\Temp\build\ImageManipulator\scala-2.9.3\image-manipulator_2.9.3-1.0.5.jar'
+-outjars 'C:\Users\Raymond\AppData\Local\Temp\build\ImageManipulator\scala-2.9.3\website\imageManipulator-1.0.5-orig-mini.jar.identity'
+
+-libraryjars 'C:\Program Files\Java\jdk1.7.0_07\jre\lib\rt.jar'
+-libraryjars 'C:\Program Files\Java\jdk1.7.0_07\jre\lib\javaws.jar'
+-libraryjars 'C:\Users\Raymond\.ivy2\cache\org.scala-lang\scala-library\jars\scala-library-2.9.3.jar'

@@ -51,7 +51,7 @@ import scala.collection.JavaConversions.asScalaIterator
  * @version 2012 Dec 27 - set the chooser's accessory to a component that will modify the ImageWriteParams
  * @version 2013 Feb 24 - make accessory reflect first filefilter shown upon first showing
  */
-class SwingSaveListener(val getImage:Function0[RenderedImage]) extends ActionListener
+final class SwingSaveListener(val getImage:Function0[RenderedImage]) extends ActionListener
 {
 	def actionPerformed(arg0:ActionEvent)
 	{

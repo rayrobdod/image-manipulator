@@ -69,7 +69,7 @@ private[imageManipulator] object LoggerInitializer
  * @version 2012 Sept 12
  * @todo move to util package if this can be used elsewhere
  */
-class SwingWindowHandler extends Handler
+final class SwingWindowHandler extends Handler
 {
 	def close() {}
 	def flush() {}

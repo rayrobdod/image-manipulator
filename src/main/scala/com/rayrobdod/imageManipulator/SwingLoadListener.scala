@@ -52,7 +52,7 @@ import scala.collection.JavaConversions.asScalaIterator
  * 
  * @param setImage a function that the listener will put the obtained image into
  */
-class SwingLoadListener(val setImage:Function1[BufferedImage, Any]) extends ActionListener
+final class SwingLoadListener(val setImage:Function1[BufferedImage, Any]) extends ActionListener
 {
 	def actionPerformed(e:ActionEvent)
 	{

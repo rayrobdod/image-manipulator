@@ -46,7 +46,7 @@ import com.rayrobdod.swing.GridBagConstraintsFactory
  * @version 2013 Jun 05 - maked preview operations work on scaled instances
  * @version 2013 Jun 05 - private object scaleImage extends Function1 => private def scaleImage
  */
-class ImageManipulateFrame extends JFrame
+final class ImageManipulateFrame extends JFrame
 {
 	private def scaleImage(src:BufferedImage):BufferedImage = {
 		if (src.getHeight > 400 && src.getHeight >= src.getWidth) {

@@ -49,7 +49,7 @@ import java.util.logging.{Level, LogRecord}
  * @version 2013 Jun 03 - closing the input stream
  * @since 1.0.2
  */
-class JavaWSLoadListener(val setImage:Function1[BufferedImage, Any]) extends ActionListener
+final class JavaWSLoadListener(val setImage:Function1[BufferedImage, Any]) extends ActionListener
 {
 	def actionPerformed(e:ActionEvent)
 	{
@@ -76,7 +76,7 @@ class JavaWSLoadListener(val setImage:Function1[BufferedImage, Any]) extends Act
  * @version 2012 Sept 11 - failed attempt at inserting logging to figure out why this thing refuses to work.
  * @version 2012 Sept 11 - fixing so that this works - more threads!
  */
-class JavaWSSaveListener(val getImage:Function0[RenderedImage]) extends ActionListener
+final class JavaWSSaveListener(val getImage:Function0[RenderedImage]) extends ActionListener
 {
 	// Apparently, JavaWS doesn't give permission to use logging at all.
 	def actionPerformed(e:ActionEvent)
@@ -219,7 +219,7 @@ object JavaWSSaveAndLoadListener
 		})
 		
 		val dialogLock = new Object()
-		class DialogAnswerListener(closeButton:Int) extends WindowAdapter with ActionListener
+		final class DialogAnswerListener(closeButton:Int) extends WindowAdapter with ActionListener
 		{
 			override def windowClosing(e:WindowEvent) {
 				dialogLock.synchronized

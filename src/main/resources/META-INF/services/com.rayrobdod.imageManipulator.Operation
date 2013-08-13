@@ -9,4 +9,4 @@ com.rayrobdod.imageManipulator.operations.ContrastStretching
 com.rayrobdod.imageManipulator.operations.TwoTone
 com.rayrobdod.imageManipulator.operations.MedianFilter
 #com.rayrobdod.imageManipulator.operations.TetronicDejpeger
-com.rayrobdod.imageManipulator.operations.GaussianFilter
+com.rayrobdod.imageManipulator.operations.GaussianBlur

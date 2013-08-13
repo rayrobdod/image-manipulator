@@ -74,7 +74,7 @@ object SaveAndLoadListeners
 	 * An exception thrown by [[SaveAndLoadListeners]]'s methods in the case where
 	 * no Save or Load listeners think they will be able to work. 
 	 */
-	class NoAvailableFileOperatorsException(msg:String) extends Exception(msg)
+	final class NoAvailableFileOperatorsException(msg:String) extends Exception(msg)
 	{
 		def this() = {this("No SaveAndLoadListeners work under the current environment ")}
 	}

@@ -74,7 +74,7 @@ object ImageIoSpiToExtensionFilter extends Function1[ImageReaderWriterSpi, FileF
 	}
 	
 	
-	private class AcceptAllWithNewDescriptionFileFilter(
+	private final class AcceptAllWithNewDescriptionFileFilter(
 		override val getDescription:String
 	) extends FileFilter {
 		def accept(f:java.io.File) = true

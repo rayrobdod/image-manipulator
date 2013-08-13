@@ -53,7 +53,7 @@ import java.text.NumberFormat.{getIntegerInstance => NumberFormat}
  * @version 2013 Feb 24 implementing ProgressiveAccessory and TilingAccessory
  * @note the other two are Tiling and Progressive
  */
-class ImageWriteParamAccessory(
+final class ImageWriteParamAccessory(
 		fileFiltersToSPI:Map[FileFilter, ImageWriterSpi]
 ) extends JPanel with PropertyChangeListener
 {

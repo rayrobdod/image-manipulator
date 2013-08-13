@@ -45,7 +45,7 @@ final class ChangeColor extends Operation
 
 	override val name = "Change Color"
 	
-	class ColorsComboBoxModel extends ScalaSeqListModel[Colors.Value](Colors.values) with AbstractComboBoxModel[Colors.Value]
+	final class ColorsComboBoxModel extends ScalaSeqListModel[Colors.Value](Colors.values) with AbstractComboBoxModel[Colors.Value]
 	
 	val fromCombo = new JComboBox[Colors.Value](new ColorsComboBoxModel)
 	val toCombo = new JComboBox[Colors.Value](new ColorsComboBoxModel)
@@ -84,7 +84,7 @@ object ChangeColor
 	 */
 	object Colors
 	{
-		class Value(val name:String) {
+		final class Value(val name:String) {
 			override def toString = name;
 		}
 		

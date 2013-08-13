@@ -27,7 +27,7 @@ packageOptions in (Compile, packageBin) <+= (scalaVersion, sourceDirectory).map{
 dependencyClasspath in Compile += new Attributed( new File("C:/Program Files/Java/jdk1.7.0_21/jre/lib/javaws.jar"))(AttributeMap.empty)
 
 
-includeFilter in Compile := new FileFilter{
+includeFilter in unmanagedSources in Compile := new FileFilter{
 	def accept(n:File) = {
 		val abPath = n.getAbsolutePath().replace('\\', '/')
 		!(

@@ -1,8 +1,7 @@
 ﻿imageManipulator
 
 == 1.0.5 ==
-> Windows 7 Toolbar Support. Hope it doesn't break anything in
-	other operating systems.
+> Adding a not-that-good Guassian Filter implentation
 > Can now set "tiling" and "progressive" writing parameters
 
 > test this: JNLP loader closes file handles after reading

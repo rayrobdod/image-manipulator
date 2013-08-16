@@ -4,12 +4,13 @@
 > Adding a not-that-good Guassian Filter implentation
 > Can now set "tiling" and "progressive" writing parameters
 
-> test this: JNLP loader closes file handles after reading
+> JNLP loader closes file handles after reading
 > performance enhancements, in exchange for possibly less accurate preview
 > Preview is now never wider than 400 pixels, in addition to previous
 	never taller than 400 pixels
 > sorting file format dropdowns in (swing) load/save menus by description
-	(TODO: Do same in JavaWS)
+
+> Using "Scala 2.9.3" instead of "Scala 2.9.1"
 
 == 1.0.4 ==
 > Removing "Rescale" and replacing with "Contrast Stretch"

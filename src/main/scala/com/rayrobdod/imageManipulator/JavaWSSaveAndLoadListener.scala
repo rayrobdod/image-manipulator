@@ -195,7 +195,8 @@ object JavaWSSaveAndLoadListener
 		
 		val availiableSpi:Seq[ImageWriterSpi] = 
 				IIORegistry.getDefaultInstance.getServiceProviders(
-						classOf[ImageWriterSpi], false).toSeq.distinct
+						classOf[ImageWriterSpi], false
+				).toSeq.distinct.sortBy{_.getFileSuffixes.head}
 		
 		val writerList = new JList[ImageWriterSpi](new ScalaSeqListModel(availiableSpi))
 		writerList.setCellRenderer(new ListCellRenderer[ImageWriterSpi]() {

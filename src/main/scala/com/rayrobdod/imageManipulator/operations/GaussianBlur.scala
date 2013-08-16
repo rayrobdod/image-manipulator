@@ -78,7 +78,7 @@ final class GaussianBlur extends Operation
 			val Δy = y - center + 1
 			
 			val newValue = (math.exp(-(Δx * Δx) / (2 * σ2)) *
-				math.exp(-(Δy * Δy) / (2 * σ2))) / (2* math.Pi * σ2)
+				math.exp(-(Δy * Δy) / (2 * σ2))) / (2 * math.Pi * σ2)
 			val index = x * width + y
 			
 			kernelBytes(index) = newValue.floatValue;

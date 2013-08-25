@@ -59,9 +59,10 @@ object ImageManipulatorBuild extends Build {
 		packer.properties.put(EFFORT, "9");
 		packer.properties.put(MODIFICATION_TIME, LATEST);
 		packer.properties.put(KEEP_FILE_ORDER, FALSE);
-		//packer.properties.put(CODE_ATTRIBUTE_PFX+"LineNumberTable",    STRIP);
-		//packer.properties.put(CODE_ATTRIBUTE_PFX+"LocalVariableTable", STRIP);
-		//packer.properties.put(CLASS_ATTRIBUTE_PFX+"SourceFile",        STRIP);
+		packer.properties.put(CODE_ATTRIBUTE_PFX+"LineNumberTable",    STRIP);
+		packer.properties.put(CODE_ATTRIBUTE_PFX+"LocalVariableTable", STRIP);
+		packer.properties.put(CLASS_ATTRIBUTE_PFX+"SourceFile",        STRIP);
+		packer.properties.put(CLASS_ATTRIBUTE_PFX+"ScalaSig",          "BBB");
 		packer.properties.put("com.sun.java.util.jar.pack.verbose",    "-1000");
 		//
 		// only bother doing the action if stuff changed recently

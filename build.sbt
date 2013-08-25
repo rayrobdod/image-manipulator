@@ -4,13 +4,13 @@ organization := "com.rayrobdod"
 
 organizationHomepage := Some(new URL("http://rayrobdod.name/"))
 
-version := "1.0.5-SNAPSHOT"
+version := "1.0.5"
 
 scalaVersion := "2.9.3"
 
 crossScalaVersions ++= Seq("2.11.0-M4", "2.10.2", "2.9.1")
 
-libraryDependencies += ("com.rayrobdod" %% "utilities" % "1.0.0-SNAPSHOT")
+libraryDependencies += ("com.rayrobdod" %% "utilities" % "1.0.0")
 
 exportJars := true
 

@@ -27,26 +27,53 @@
 package com.rayrobdod.imageManipulator.main;
 
 import com.rayrobdod.imageManipulator.ImageManipulateFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JFrame;
 
 /**
  * A main method for the image manipulator program
  * 
  * @author Raymond Dodge
- * @version 2012 Jun 18
- * @version 2012 Sept 08 - transcribed directly from scala with no changes
- * @version 2012 Sept 09 - remarking as public. 
+ * @since 1.0.0
+ * @version 1.0.6
  */
-public class Main
+public final class Main
 {
 	private Main() {}
 	
 	public static final void main(String[] args)
 	{
-		JFrame frame = new ImageManipulateFrame();
+		final ImageManipulateFrame frame = new ImageManipulateFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setLocationByPlatform(true);
 		frame.setVisible(true);
+		
+		setInitialImage(frame, args);
+	}
+	
+	private static final void setInitialImage(ImageManipulateFrame frame, String[] args) {
+		try {
+			if (args.length != 0) {
+				final java.awt.image.BufferedImage image = 
+						javax.imageio.ImageIO.read(new java.io.File(args[0]));
+				
+				if (image != null) {
+					frame.originalImage_$eq(image);
+				} else {
+					JOptionPane.showMessageDialog(null,
+						"This application does not support the specified file's image format",
+						"Unknown File Type",
+						JOptionPane.ERROR_MESSAGE
+					);
+				}
+			}
+		} catch (java.io.IOException e) {
+			JOptionPane.showMessageDialog(null,
+				e.getMessage(),
+				"Could not read image",
+				JOptionPane.ERROR_MESSAGE
+			);
+		}
 	}
 }

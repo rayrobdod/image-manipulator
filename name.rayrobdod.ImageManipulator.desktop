@@ -1,0 +1,17 @@
+#https://wiki.ubuntu.com/Unity/LauncherAPI
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Image Manipulator
+#Comment=
+TryExec=java
+Exec=java -jar imageManipulator-1.0.6-full-micro
+#Icon=
+Terminal=false
+MimeType=image/jpg; image/png
+Actions=Open
+
+[Desktop Action Open]
+Exec=java -jar whatever %f
+Name=Modify the given file

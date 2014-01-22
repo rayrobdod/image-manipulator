@@ -1,0 +1,49 @@
+﻿imageManipulator
+
+== 1.0.5 ==
+> Adding a doesn't-handle-borders-well "Guassian Filter"
+> Can now set "tiling" and "progressive" writing parameters when saving files
+
+> JNLP loader closes file handles after reading
+> performance enhancements, in exchange for possibly less accurate preview
+> Preview is now never wider than 400 pixels, in addition to previous
+	never taller than 400 pixels
+> sorting file format dropdowns in load/save menus by description
+
+> Using "Scala 2.9.3" instead of "Scala 2.9.1"
+
+== 1.0.4 ==
+> Removing "Rescale" and replacing with "Contrast Stretch"
+> Adding "Median Filter"
+
+> Operations usually smarter about saved image degree
+> Can now set 'miscellaneous' writing parameters
+
+== 1.0.3 ==
+> Allowing access to ImageWriter's compression options
+
+> Bettering MANIFEST file
+> Making the use of ImageIO slightly more correct
+> Broke usage of BMP Image Writer, apparently
+
+== 1.0.2 ==
+> Now can be run through JavaWS.
+
+== 1.0.1 ==
+		http://rayrobdod.name/blog/entry/2012-09-06T18_04
+> Load and Save dialogs now use filename filters that use suffixes
+		provided by ImageIO, as opposed to a hard-coded list
+> adding an icon to the frame for no particular reason
+
+> turned on Proguard's optimization for the mini-full incase you were wondering
+		why that one got so much smaller
+
+== 1.0.0 ==
+		http://rayrobdod.name/blog/entry/2012-06-21T00_26
+First released version
+
+> Identity
+> Transparentify - may want to choose a color rather than always top-left color
+> ChangeColor
+> Rescale - may want inputs for min/max values rather than always 0/255
+> TwoTone

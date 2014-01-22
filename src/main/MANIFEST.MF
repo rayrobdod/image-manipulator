@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Main-Class: com.rayrobdod.imageManipulator.main.Main
+X-ALT2-Main-Class: com.rayrobdod.imageManipulator.main.Win7Main
+X-ALT-Main-Class: com.rayrobdod.imageManipulator.main.DisambigMain
+Implementation-Vendor: Raymond Dodge
+Implementation-URL: http://rayrobdod.name/programming/java/programs/imageManipulator/
+Implementation-Title: Image Manipulator
+
+
+
+Name: scala/
+Implementation-URL: http://www.scala-lang.org/
+
+
+Name: com/rayrobdod/imageManipulator/frameIcon.png
+Content-Type: image/png
+
+Name: com/rayrobdod/imageManipulator/frameIcon.ico
+X-ALT-Content-Type: image/vnd.microsoft.icon
+Content-Type: image/x-icon
+
+Name: releaseNotes.txt
+Content-Type: text/plain

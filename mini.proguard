@@ -1,24 +1,26 @@
--libraryjars 'C:\Program Files\Java\jdk1.7.0_07\jre\lib\rt.jar'
--libraryjars 'C:\Program Files\Java\jdk1.7.0_07\jre\lib\javaws.jar'
+#-libraryjars 'C:\Program Files\Java\jdk1.7.0_07\jre\lib\rt.jar'
+#-libraryjars 'C:\Program Files\Java\jdk1.7.0_07\jre\lib\javaws.jar'
 
 -dontskipnonpubliclibraryclassmembers
 -optimizationpasses 3
 -dontobfuscate
--dontwarn scala.**
+-keeppackagenames scala
+-dontwarn scala.**,com.sun.**
 
 
 -keep class com.rayrobdod.imageio.plugins.**
 
--keep class com.rayrobdod.imageManipulator.operations.*
+-keep public class com.rayrobdod.imageManipulator.operations.* extends com.rayrobdod.imageManipulator.Operation
 
 # Keep objects' MODULE$ things
--keepclassmembers class * extends * {
-	*** MODULE$;
+-keepclassmembers class * {
+    *** MODULE$;
 }
 
+-keep,allowshrinking class com.rayrobdod.imageManipulator.Operation
 
 # Keep - Library. Keep all public and protected classes, fields, and methods.
--keep public class com.rayrobdod.imageManipulator.main.Main {
+-keep public class com.rayrobdod.imageManipulator.main.* {
     public protected <fields>;
     public protected <methods>;
 }
@@ -321,4 +323,28 @@
     public int length();
     public java.lang.String substring(int);
     public java.lang.String substring(int,int);
+}
+
+# Remove debugging - Throwable_printStackTrace calls. Remove all invocations of
+# Throwable.printStackTrace().
+-assumenosideeffects public class java.lang.Throwable {
+    public void printStackTrace();
+}
+
+# Remove debugging - Thread_dumpStack calls. Remove all invocations of
+# Thread.dumpStack().
+-assumenosideeffects public class java.lang.Thread {
+    public static void dumpStack();
+}
+
+# Remove debugging - All logging API calls. Remove all invocations of the
+# logging API whose return values are not used.
+-assumenosideeffects public class java.util.logging.* {
+    <methods>;
+}
+
+# Remove debugging - All Log4j API calls. Remove all invocations of the
+# Log4j API whose return values are not used.
+-assumenosideeffects public class org.apache.log4j.** {
+    <methods>;
 }

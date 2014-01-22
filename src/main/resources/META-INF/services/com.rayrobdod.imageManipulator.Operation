@@ -1,0 +1,12 @@
+# identity first, as theoretically it's the fastest to load
+com.rayrobdod.imageManipulator.operations.Identity
+
+# The rest are not ordered in any particular order
+# However, they seem to be in order of implemented then usefullness
+com.rayrobdod.imageManipulator.operations.Transparentify
+com.rayrobdod.imageManipulator.operations.ChangeColor
+com.rayrobdod.imageManipulator.operations.ContrastStretching
+com.rayrobdod.imageManipulator.operations.TwoTone
+com.rayrobdod.imageManipulator.operations.MedianFilter
+#com.rayrobdod.imageManipulator.operations.TetronicDejpeger
+com.rayrobdod.imageManipulator.operations.GaussianBlur

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" >
+	<!--
+cd "%USERPROFILE%\Documents\Programming\Java\ImageManipulator"
+"C:\Program Files (x86)\WiX Toolset v3.8\bin\candle.exe" -pedantic -ext WixGamingExtension -out target\wix\out.wixout src\main\windows\windowsInstaller.wix
+"C:\Program Files (x86)\WiX Toolset v3.8\bin\light.exe" -ext WixUIExtension -b target\scala-2.9.3\proguard -b src\main\windows -b src\main\resources -out target\wix\out.msi target\wix\out.wixout
+	-->
+
+	<Product Name="Image Manipulator" Id="C6E622DF-CA51-446F-AFA1-9516C869F1C2"
+			UpgradeCode="C6E622DF-CA51-446F-AFA1-9516C869F1C2"
+		Language="1033" Codepage="1252" Version="1.6" Manufacturer="Raymond Dodge">
+		
+		<Package Id="*" Keywords="Installer" Description="Image Manipulator Installer"
+			Comments=" " Manufacturer="Raymond Dodge"
+			InstallerVersion="100" Languages="1033" Compressed="yes" SummaryCodepage="1252" />
+		
+		<UIRef Id="WixUI_Mondo" />
+		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+		<WixVariable Id="WixUILicenseRtf" Value="LICENSE.txt" />
+		
+		<Icon Id="icon.ico" SourceFile="com\rayrobdod\imageManipulator\frameIcon.ico"/>
+		<Property Id="ARPPRODUCTICON" Value="icon.ico" />
+		
+		
+		<Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' DiskPrompt='CD-ROM #1' />
+		<Property Id='DiskPrompt' Value="Deduction Tactics" />
+		
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="CompanyFolder" Name="rayrobdod">
+					<Directory Id="INSTALLDIR" Name="Image Manipulator">
+						<Component Id="MainJar" Guid="DE0BA1E2-DF8E-4A0B-A8A9-CB31CD3EF9E4">
+							<File Id="MainJarFile" KeyPath="yes"
+									Name="imageManipulator.jar"
+									Source="image-manipulator_2.9.3-1.0.6-SNAPSHOT.jar" />
+							<!-- RemoveFile Id='MainJar' On='uninstall' Name='deductionTactics.jar' / -->
+						</Component>
+					
+						<Component Id="License" Guid="5A54F4A8-F153-4EEB-979C-9488C0C2CA31">
+							<File Id="LicenseFile" Name="LICENSE.txt" Source="LICENSE.txt" KeyPath="yes" />
+						</Component>
+						
+						<Component Id="TaskbarDll" Guid="65350282-E39B-40D6-9712-D198CB25B406">
+							<File Id="TaskbarDllFile" Name="Taskbar.dll" Source="Taskbar.dll" KeyPath="yes" />
+						</Component>
+						
+						<Component Id="ResDll" Guid="8C455057-EC00-456F-A5C0-A900ADE2C3EF">
+							<File Id="RedDllFile" Name="imageManipulator.dll" Source="imageManipulator.dll" KeyPath="yes" />
+						</Component>
+					</Directory>
+				</Directory>
+			</Directory>
+			<Directory Id="ProgramMenuFolder" Name="StartMenu">
+				<Component Id="ApplicationShortcut" Guid="1AFB74A1-954D-4CC6-BBEF-B1AE1E563225">
+					<Shortcut Id="ApplicationStartMenuShortcut"
+							Name="Image Manipulator"
+							Description="My Application Description"
+							Target="java" Arguments="-jar [#MainJarFile]"
+							WorkingDirectory="INSTALLDIR"/>
+					<RegistryValue Root="HKCU" Key="Software\rayrobdod\ImageManipulator" Name="startMenu" Type="integer" Value="1" KeyPath="yes"/>
+				</Component>
+			</Directory>
+			<Component Id="ApplicationRegistration" Guid="F2E59D52-AFE5-4724-A8F9-C77BDA19E3DD">
+				<RegistryKey Root="HKCU" Key="Software\Classes\Applications\ImageManipulator.jar" >
+					<RegistryValue                       Type="string" Value="Image Manipulator" KeyPath="yes" />
+					<RegistryValue Name="AppUserModelID" Type="string" Value="Rayrobdod.ImageManipulator" />
+					<RegistryValue Key="shell\open\command" Type="string" Value='java -jar [#MainJarFile] "%1"' />
+				</RegistryKey>
+			</Component>
+			<Component Id="FileAssociations" Guid="A5C14B4B-2FDF-40D9-8251-9A1541A7EB8D">
+				<RegistryKey Root="HKCU" Key="Software\Classes\Applications\ImageManipulator.jar\SupportedTypes">
+					<RegistryValue Type="string" Name=".bmp" Value="" KeyPath="yes" />
+					<RegistryValue Type="string" Name=".jpg" Value="" />
+					<RegistryValue Type="string" Name=".png" Value="" />
+				</RegistryKey>
+				<RegistryKey Root="HKCU" Key="Software\Classes\rrd.image.bmp">
+					<RegistryValue Type="string" Value="Image Manipulator" />
+					<RegistryValue Key="shell\open\command"
+								Type="string" Value='javaw -jar "[#MainJarFile]" "%1"' />
+				</RegistryKey>
+				<RegistryKey Root="HKCU" Key="Software\Classes\.bmp\OpenWithProgids">
+					<RegistryValue Type="string" Name="rrd.image.bmp" Value="" />
+				</RegistryKey>
+			</Component>
+			<!-- Component Id="DefaultPrograms" Guid="">
+				<RegistryKey Root="HKCU" Key="Software\rayrobdod\ImageManipulator\Capabilities" >
+					<RegistryValue Name="ApplicationDescription" Type="string" Value="Image Manipulator" />
+					<RegistryValue Name="ApplicationName" Type="string" Value="Image Manipulator" />
+					<RegistryKey Key="FileAssociations" >
+						<RegistryValue Name=".bmp" Type="string" Value="rrd.image.bmp" />
+					
+					</RegistryKey>
+				</RegistryKey>
+				<RegistryValue Root="HKCU" Key="HKEY_LOCAL_MACHINE\SOFTWARE\RegisteredApplications" Name="Image Manipulator"
+						Type="string" Value="Software\rayrobdod\ImageManipulator\Capabilities" />
+				
+			</Component -->
+		</Directory>
+		
+		<Feature Id="Complete" Level="1" Title="Image Manipulator"
+					Description="the files required for running the program"
+					Display="expand" ConfigurableDirectory='INSTALLDIR'>
+			<ComponentRef Id="MainJar" />
+			<ComponentRef Id="License" />
+			<ComponentRef Id="TaskbarDll" />
+			<ComponentRef Id="ResDll" />
+			<ComponentRef Id="ApplicationShortcut" />
+			<ComponentRef Id="ApplicationRegistration" />
+			
+			<Feature Id="FileAssoc" Level="10" Title="File Associations"
+						Description="registers the program as able to handle certain file types"
+						Display="expand">
+				<ComponentRef Id="FileAssociations" />
+			</Feature>
+		</Feature>
+		
+		
+		<Property Id='unpack'>unpack200.exe</Property>
+		<CustomAction Id='UnpackJar' Property='unpack' ExeCommand='"[INSTALLDIR]deductionTactics.jar.pack.gz" "[INSTALLDIR]deductionTactics.jar"' Return='check' />
+		
+		<InstallExecuteSequence>
+			<!--LaunchConditions After='InstallFiles' /-->
+			<!-- Custom Action='UnpackJar' After='InstallFiles'>NOT Installed</Custom -->
+			<!-- Custom Action='UnpackJar' After='InstallFinalize'>NOT Installed</Custom -->
+		</InstallExecuteSequence>
+		
+	</Product>
+</Wix>

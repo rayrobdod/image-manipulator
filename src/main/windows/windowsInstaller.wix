@@ -45,7 +45,7 @@ cd "%USERPROFILE%\Documents\Programming\Java\ImageManipulator"
 						</Component>
 						
 						<Component Id="ResDll" Guid="8C455057-EC00-456F-A5C0-A900ADE2C3EF">
-							<File Id="RedDllFile" Name="imageManipulator.dll" Source="imageManipulator.dll" KeyPath="yes" />
+							<File Id="ResDllFile" Name="imageManipulator.dll" Source="imageManipulator.dll" KeyPath="yes" />
 						</Component>
 					</Directory>
 				</Directory>
@@ -71,12 +71,13 @@ cd "%USERPROFILE%\Documents\Programming\Java\ImageManipulator"
 				<RegistryKey Root="HKCU" Key="Software\Classes\Applications\ImageManipulator.jar\SupportedTypes">
 					<RegistryValue Type="string" Name=".bmp" Value="" KeyPath="yes" />
 					<RegistryValue Type="string" Name=".jpg" Value="" />
+					<RegistryValue Type="string" Name=".jpeg" Value="" />
 					<RegistryValue Type="string" Name=".png" Value="" />
 				</RegistryKey>
 				
 				<!-- the ProgId -->
 				<RegistryKey Root="HKCU" Key="Software\Classes\rrd.image.anyImage">
-					<RegistryValue Type="string" Value="Image Manipulator" />
+					<RegistryValue Type="string" Value="An Image File" />
 					<RegistryValue Name="AppUserModelID" Type="string" Value="Rayrobdod.ImageManipulator" />
 					<RegistryValue Key="shell\open\command"
 								Type="string" Value='javaw -jar "[#MainJarFile]" "%1"' />
@@ -124,7 +125,7 @@ cd "%USERPROFILE%\Documents\Programming\Java\ImageManipulator"
 		
 		
 		<Property Id='unpack'>unpack200.exe</Property>
-		<CustomAction Id='UnpackJar' Property='unpack' ExeCommand='"[INSTALLDIR]deductionTactics.jar.pack.gz" "[INSTALLDIR]deductionTactics.jar"' Return='check' />
+		<CustomAction Id='UnpackJar' Property='unpack' ExeCommand='"[#INSTALLDIR]deductionTactics.jar.pack.gz" "[#INSTALLDIR]deductionTactics.jar"' Return='check' />
 		
 		<InstallExecuteSequence>
 			<!--LaunchConditions After='InstallFiles' /-->

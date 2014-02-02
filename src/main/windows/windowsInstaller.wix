@@ -21,8 +21,10 @@ cd "%USERPROFILE%\Documents\Programming\Java\ImageManipulator"
 		<Icon Id="icon.ico" SourceFile="com\rayrobdod\imageManipulator\frameIcon.ico"/>
 		<Property Id="ARPPRODUCTICON" Value="icon.ico" />
 		
+		<?define MainJarFileName     = imageManipulator.jar ?>
+		<?define MainJarFilePackName = $(var.MainJarFileName).pack.gz ?>
 		
-		<Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' DiskPrompt='CD-ROM #1' />
+		<Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' DiskPrompt='CD-ROM #1' CompressionLevel="none" />
 		<Property Id='DiskPrompt' Value="Deduction Tactics" />
 		
 		<Directory Id="TARGETDIR" Name="SourceDir">
@@ -30,10 +32,10 @@ cd "%USERPROFILE%\Documents\Programming\Java\ImageManipulator"
 				<Directory Id="CompanyFolder" Name="rayrobdod">
 					<Directory Id="INSTALLDIR" Name="Image Manipulator">
 						<Component Id="MainJar" Guid="DE0BA1E2-DF8E-4A0B-A8A9-CB31CD3EF9E4">
-							<File Id="MainJarFile" KeyPath="yes"
-									Name="imageManipulator.jar"
-									Source="imageManipulator-1.0.6-SNAPSHOT-full-mini.jar" />
-							<!-- RemoveFile Id='MainJar' On='uninstall' Name='deductionTactics.jar' / -->
+							<File Id="MainJarPackFile" KeyPath="yes"
+									Name="$(var.MainJarFilePackName)"
+									Source="imageManipulator-1.0.6-SNAPSHOT-full-mini.jar.pack.gz" />
+							<RemoveFile Id='MainJarFile' On='uninstall' Name='$(var.MainJarFileName)' />
 						</Component>
 					
 						<Component Id="License" Guid="5A54F4A8-F153-4EEB-979C-9488C0C2CA31">
@@ -55,20 +57,20 @@ cd "%USERPROFILE%\Documents\Programming\Java\ImageManipulator"
 					<Shortcut Id="ApplicationStartMenuShortcut"
 							Name="Image Manipulator"
 							Description="My Application Description"
-							Target="java" Arguments="-jar [#MainJarFile]"
+							Target="java" Arguments="-jar [INSTALLDIR]\$(var.MainJarFileName)"
 							WorkingDirectory="INSTALLDIR"/>
 					<RegistryValue Root="HKCU" Key="Software\rayrobdod\ImageManipulator" Name="startMenu" Type="integer" Value="1" KeyPath="yes"/>
 				</Component>
 			</Directory>
 			<Component Id="ApplicationRegistration" Guid="F2E59D52-AFE5-4724-A8F9-C77BDA19E3DD">
-				<RegistryKey Root="HKCU" Key="Software\Classes\Applications\ImageManipulator.jar" >
+				<RegistryKey Root="HKCU" Key="Software\Classes\Applications\$(var.MainJarFileName)" >
 					<RegistryValue                       Type="string" Value="Image Manipulator" KeyPath="yes" />
 					<RegistryValue Name="AppUserModelID" Type="string" Value="Rayrobdod.ImageManipulator" />
-					<RegistryValue Key="shell\open\command" Type="string" Value='java -jar [#MainJarFile] "%1"' />
+					<RegistryValue Key="shell\open\command" Type="string" Value='java -jar [INSTALLDIR]\$(var.MainJarFileName) "%1"' />
 				</RegistryKey>
 			</Component>
 			<Component Id="FileAssociations" Guid="A5C14B4B-2FDF-40D9-8251-9A1541A7EB8D">
-				<RegistryKey Root="HKCU" Key="Software\Classes\Applications\ImageManipulator.jar\SupportedTypes">
+				<RegistryKey Root="HKCU" Key="Software\Classes\Applications\$(var.MainJarFileName)\SupportedTypes">
 					<RegistryValue Type="string" Name=".bmp" Value="" KeyPath="yes" />
 					<RegistryValue Type="string" Name=".jpg" Value="" />
 					<RegistryValue Type="string" Name=".jpeg" Value="" />
@@ -80,7 +82,7 @@ cd "%USERPROFILE%\Documents\Programming\Java\ImageManipulator"
 					<RegistryValue Type="string" Value="An Image File" />
 					<RegistryValue Name="AppUserModelID" Type="string" Value="Rayrobdod.ImageManipulator" />
 					<RegistryValue Key="shell\open\command"
-								Type="string" Value='javaw -jar "[#MainJarFile]" "%1"' />
+								Type="string" Value='javaw -jar "[INSTALLDIR]\$(var.MainJarFileName)" "%1"' />
 				</RegistryKey>
 				<RegistryValue Root="HKCU" Key="Software\Classes\.bmp\OpenWithProgids"
 							Type="string" Name="rrd.image.anyImage" Value="" />
@@ -124,13 +126,13 @@ cd "%USERPROFILE%\Documents\Programming\Java\ImageManipulator"
 		</Feature>
 		
 		
-		<Property Id='unpack'>unpack200.exe</Property>
-		<CustomAction Id='UnpackJar' Property='unpack' ExeCommand='"[#INSTALLDIR]deductionTactics.jar.pack.gz" "[#INSTALLDIR]deductionTactics.jar"' Return='check' />
+		<!-- TODO:  http://wixtoolset.org/documentation/manual/v3/customactions/qtexec.html -->
+		<Property Id='unpack' Value="unpack200.exe" />
+		<CustomAction Id='UnpackJar' Property='unpack' Execute="deferred" Return='check' Impersonate="no"
+					ExeCommand='"[INSTALLDIR]\$(var.MainJarFilePackName)" "[INSTALLDIR]\$(var.MainJarFileName)"' />
 		
 		<InstallExecuteSequence>
-			<!--LaunchConditions After='InstallFiles' /-->
-			<!-- Custom Action='UnpackJar' After='InstallFiles'>NOT Installed</Custom -->
-			<!-- Custom Action='UnpackJar' After='InstallFinalize'>NOT Installed</Custom -->
+			<Custom Action='UnpackJar' After='InstallFiles'>NOT Installed</Custom>
 		</InstallExecuteSequence>
 		
 	</Product>

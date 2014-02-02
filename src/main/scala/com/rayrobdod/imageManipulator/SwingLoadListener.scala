@@ -34,6 +34,7 @@ import javax.swing.filechooser.{FileNameExtensionFilter, FileFilter}
 import java.awt.image.{RenderedImage, BufferedImage}
 import java.io.IOException
 import javax.imageio.spi.{ImageReaderSpi, IIORegistry}
+import com.rayrobdod.util.Taskbar;
 import scala.collection.JavaConversions.asScalaIterator
 
 /**
@@ -78,6 +79,9 @@ final class SwingLoadListener(val setImage:Function1[BufferedImage, Any]) extend
 				
 				if (image != null) {
 					setImage(image)
+					if (Taskbar.tryLoadWindowsLibrary()) {
+						Taskbar.addToRecentDocs(chooser.getSelectedFile().getPath())
+					}
 				} else {
 					JOptionPane.showMessageDialog(null,
 							"This application does not support the specified file's image format",

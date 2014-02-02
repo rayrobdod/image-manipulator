@@ -52,7 +52,7 @@ public final class Main
 		setInitialImage(frame, args);
 	}
 	
-	private static final void setInitialImage(ImageManipulateFrame frame, String[] args) {
+	public static final void setInitialImage(ImageManipulateFrame frame, String[] args) {
 		try {
 			if (args.length != 0) {
 				final java.awt.image.BufferedImage image = 

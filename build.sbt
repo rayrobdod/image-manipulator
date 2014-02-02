@@ -27,18 +27,6 @@ packageOptions in (Compile, packageBin) <+= (scalaVersion, sourceDirectory).map{
 dependencyClasspath in Compile += new Attributed( new File("C:/Program Files/Java/jdk1.7.0_21/jre/lib/javaws.jar"))(AttributeMap.empty)
 
 
-excludeFilter in unmanagedSources in Compile := new FileFilter{
-	def accept(n:File) = {
-		val abPath = n.getAbsolutePath().replace('\\', '/')
-		(
-			(abPath endsWith "com/rayrobdod/imageManipulator/main/DisambigMain.java") ||
-			(abPath endsWith "com/rayrobdod/imageManipulator/main/Win7Main.java")
-		)
-	}
-}
-
-
-
 //normalizedName.????
 //addArtifact( Artifact("image-manipulator", "pack200+gz", "gz"), packageBinPack )
 
@@ -60,6 +48,10 @@ ProguardKeys.inputFilter in Proguard := { file =>
     None
   else
     Some("**.class")
+}
+
+artifactPath in Proguard <<= (artifactPath in Proguard, proguardType, version).apply{(orig:File, level:String, version:String) =>
+	orig.getParentFile() / ("imageManipulator-" + version + "-full-" + level + ".jar")
 }
 
 // anon-fun-reduce

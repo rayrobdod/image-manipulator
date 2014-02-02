@@ -28,17 +28,13 @@ package com.rayrobdod.imageManipulator.main;
 
 import com.rayrobdod.imageManipulator.ImageManipulateFrame;
 import javax.swing.JFrame;
-import com.rayrobdod.util.Win7Taskbar;
+import com.rayrobdod.util.Taskbar;
 import java.util.logging.Logger;
 
 /**
  * A main method for the image manipulator program
  * 
  * @author Raymond Dodge
- * @version 2012 Jun 18
- * @version 2012 Sept 08 - transcribed directly from scala with no changes
- * @version 2012 Sept 09 - remarking as public. 
- * @version 2013 Jan 10-11 - Win7Taskbar seems to work; not trying to get this to work on top of that
  */
 public class Win7Main
 {
@@ -50,9 +46,9 @@ public class Win7Main
 	
 	public static final void main(String[] args)
 	{
-		Win7Taskbar.setCurrentProcessAppID(appID);
+		Taskbar.setCurrentProcessAppID(appID);
 		
-		JFrame frame = new ImageManipulateFrame();
+		ImageManipulateFrame frame = new ImageManipulateFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setLocationByPlatform(true);
@@ -75,10 +71,12 @@ public class Win7Main
 			String command = "javaw -jar " + myPath;
 			logger.info("Relaunch command: " + command);
 			
-			Win7Taskbar.setRelaunchCommand(frame, appID, command, name);
+			Taskbar.setRelaunchCommand(frame, appID, command, name);
 			
 		} else {
 			logger.info("Not setting relaunch command");
 		}
+		
+		Main.setInitialImage(frame, args);
 	}
 }

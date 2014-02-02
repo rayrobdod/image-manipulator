@@ -26,6 +26,8 @@
 */
 package com.rayrobdod.imageManipulator.main;
 
+import com.rayrobdod.util.Taskbar;
+
 /**
  * A main method for the image manipulator program
  *
@@ -33,7 +35,7 @@ package com.rayrobdod.imageManipulator.main;
  * main classes to call.
  * 
  * @author Raymond Dodge
- * @version 2013 Feb 25
+ * @version 2014 Feb 01
  */
 public class DisambigMain
 {
@@ -41,9 +43,7 @@ public class DisambigMain
 	
 	public static final void main(String[] args)
 	{
-		if (System.getProperty("os.name").contains("Windows") &&
-				System.getProperty("os.version").compareTo("6.1") >= 0)
-		{
+		if (Taskbar.tryLoadWindowsLibrary()) {
 			Win7Main.main(args);
 		} else {
 			Main.main(args);

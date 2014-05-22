@@ -24,6 +24,13 @@ cd "%USERPROFILE%\Documents\Programming\Java\ImageManipulator"
 		<?define MainJarFileName     = imageManipulator.jar ?>
 		<?define MainJarFilePackName = $(var.MainJarFileName).pack.gz ?>
 		
+		<!-- Property Id="JAVAHOME">
+			<RegistrySearch Id="NetFramework20"
+					Root="HKLM" Key="SOFTWARE\JavaSoft\Java Runtime Environment\1.7"
+					Name="JavaHome" Type="raw" />
+		</Property -->
+		
+		
 		<Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' DiskPrompt='CD-ROM #1' CompressionLevel="none" />
 		<Property Id='DiskPrompt' Value="Deduction Tactics" />
 		
@@ -57,7 +64,7 @@ cd "%USERPROFILE%\Documents\Programming\Java\ImageManipulator"
 					<Shortcut Id="ApplicationStartMenuShortcut"
 							Name="Image Manipulator"
 							Description="My Application Description"
-							Target="java" Arguments="-jar [INSTALLDIR]\$(var.MainJarFileName)"
+							Target="java" Arguments='-jar "[INSTALLDIR]\$(var.MainJarFileName)"'
 							WorkingDirectory="INSTALLDIR"/>
 					<RegistryValue Root="HKCU" Key="Software\rayrobdod\ImageManipulator" Name="startMenu" Type="integer" Value="1" KeyPath="yes"/>
 				</Component>
@@ -66,8 +73,14 @@ cd "%USERPROFILE%\Documents\Programming\Java\ImageManipulator"
 				<RegistryKey Root="HKCU" Key="Software\Classes\Applications\$(var.MainJarFileName)" >
 					<RegistryValue                       Type="string" Value="Image Manipulator" KeyPath="yes" />
 					<RegistryValue Name="AppUserModelID" Type="string" Value="Rayrobdod.ImageManipulator" />
+					<!-- RegistryValue Name="FriendlyAppName" Type="string" Value="Image Manipulator" / -->
 					<RegistryValue Key="shell\open\command" Type="string" Value='java -jar [INSTALLDIR]\$(var.MainJarFileName) "%1"' />
+					<!-- RegistryValue Key="shell\open"      Type="string" Name="FriendlyAppName" Value="Image Manipulator" / -->
 				</RegistryKey>
+				<!-- RegistryKey Root="HKCU" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\imageManipulator.jar" >
+					<RegistryValue Type="string" Value='"[JAVAHOME]\bin\javaw.exe" -jar "[INSTALLDIR]\$(var.MainJarFileName)"' />
+					<RegistryValue Name="Path" Type="string" Value='"[INSTALLDIR]"' />
+				</RegistryKey -->
 			</Component>
 			<Component Id="FileAssociations" Guid="A5C14B4B-2FDF-40D9-8251-9A1541A7EB8D">
 				<RegistryKey Root="HKCU" Key="Software\Classes\Applications\$(var.MainJarFileName)\SupportedTypes">
@@ -83,6 +96,7 @@ cd "%USERPROFILE%\Documents\Programming\Java\ImageManipulator"
 					<RegistryValue Name="AppUserModelID" Type="string" Value="Rayrobdod.ImageManipulator" />
 					<RegistryValue Key="shell\open\command"
 								Type="string" Value='javaw -jar "[INSTALLDIR]\$(var.MainJarFileName)" "%1"' />
+					<RegistryValue Key="shell\open" Type="string" Name="FriendlyAppName" Value="Image Manipulator" />
 				</RegistryKey>
 				<RegistryValue Root="HKCU" Key="Software\Classes\.bmp\OpenWithProgids"
 							Type="string" Name="rrd.image.anyImage" Value="" />

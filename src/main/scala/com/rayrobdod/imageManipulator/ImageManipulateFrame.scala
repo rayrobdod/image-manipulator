@@ -39,71 +39,29 @@ import com.rayrobdod.swing.GridBagConstraintsFactory
  * A frame that holds the common elements of the image conversions
  * 
  * @author Raymond Dodge
- * @version 2012 Jun 18-19
- * @version 2012 Sept 09 - added 16x16 image icon to frame
- * @version 2012 Sept 10 - modified to use SaveAndLoadListeners
- * @version 2013 Feb 06 - GridBagConstraintsRemainder is now a val, not an object
- * @version 2013 Jun 05 - maked preview operations work on scaled instances
- * @version 2013 Jun 05 - private object scaleImage extends Function1 => private def scaleImage
+ * @since 2012 Jun 18-19
+ * @version 2.0
  */
 final class ImageManipulateFrame extends JFrame
 {
-	private def scaleImage(src:BufferedImage):BufferedImage = {
-		if (src.getHeight > 400 && src.getHeight >= src.getWidth) {
-			val width = src.getWidth * 400 / src.getHeight
-			
-			val a = src.getData.createCompatibleWritableRaster(width, 400)
-			val b = new BufferedImage(src.getColorModel, a, true, new java.util.Hashtable())
-			b.createGraphics().drawImage(src, 0, 0, width, 400, null)
-			return b
-		} else if (src.getWidth > 400 && src.getHeight <= src.getWidth) {
-			val height = src.getHeight * 400 / src.getWidth
-			
-			val a = src.getData.createCompatibleWritableRaster(400, height)
-			val b = new BufferedImage(src.getColorModel, a, true, new java.util.Hashtable())
-			b.createGraphics().drawImage(src, 0, 0, 400, height, null)
-			return b
-		} else {
-			src
-		}
+	val model = new Observer(
+		new FrameModel(
+			new BufferedImage(5,5,alpha),
+			new operations.Identity()
+		)
+	)
+	
+	model.addChangeListener{(m:FrameModel) =>
+		originalImageLabel.setIcon(new ImageIcon(m.originalImageScaled))
+		afterImageLabel.setIcon(new ImageIcon(m.afterImageScaled))
 	}
 	
-	private var _originalImage:BufferedImage = new BufferedImage(5,5,alpha)
-	private var _originalImageScaled:BufferedImage = _originalImage
-	private var _afterImage:BufferedImage = _originalImage
-	
-	def originalImage = _originalImage
-	def originalImageScaled = _originalImageScaled
-	def originalImage_=(x:BufferedImage) =
-	{
-		_originalImage = x
-		_originalImageScaled = scaleImage(originalImage)
-		originalImageLabel.setIcon(new ImageIcon(originalImageScaled))
-		pack()
-	}
-	
-	def afterImage = {
-		if (modeChooser.getSelectedIndex < 0) {
-			originalImage
-		} else {
-			val manipulation = modeChooser.getModel.getElementAt(modeChooser.getSelectedIndex)
-			manipulation(originalImage)
-		}
-	}
-	def afterImageScaled =  {
-		if (modeChooser.getSelectedIndex < 0) {
-			originalImageScaled
-		} else {
-			val manipulation = modeChooser.getModel.getElementAt(modeChooser.getSelectedIndex)
-			manipulation(originalImageScaled)
-		}
-	}
 	
 	object UpdateImageActionListener extends ActionListener
 	{
 		def actionPerformed(e:ActionEvent)
 		{
-			afterImageLabel.setIcon(new ImageIcon(afterImageScaled))
+			afterImageLabel.setIcon(new ImageIcon(model().afterImageScaled))
 		}
 	}
 	
@@ -120,6 +78,15 @@ final class ImageManipulateFrame extends JFrame
 		}
 	}
 	
+	object UpdateFrameModelOperationActionListener extends ActionListener {
+		def actionPerformed(e:ActionEvent) {
+			model.update(new FrameModel(
+				model().originalImage,
+				modeChooser.getModel.getElementAt(modeChooser.getSelectedIndex)
+			))
+		}
+	}
+	
 	val originalImageLabel = new JLabel
 	val afterImageLabel = new JLabel
 	val loadButton = new JButton("Load")
@@ -130,11 +97,10 @@ final class ImageManipulateFrame extends JFrame
 	val modeCustomArea = new JPanel
 	
 	modeChooser.setSelectedIndex(0)
-	// add UpdateImageActionListener first so that it happens after the loadListener
-	loadButton.addActionListener(UpdateImageActionListener)
-	loadButton.addActionListener(SaveAndLoadListeners.loadListener(originalImage_=_))
-	saveButton.addActionListener(SaveAndLoadListeners.saveListener(() => afterImage))
-	modeChooser.addActionListener(UpdateImageActionListener)
+	
+	loadButton.addActionListener(SaveAndLoadListeners.loadListener{(a) => model.update(new FrameModel(a, model().operation))})
+	saveButton.addActionListener(SaveAndLoadListeners.saveListener{() => model().afterImage})
+	modeChooser.addActionListener(UpdateFrameModelOperationActionListener)
 	modeChooser.addActionListener(SetupCustomModeArea)
 	
 	private val GridBagConstraintsRemainder = GridBagConstraintsFactory(gridwidth = GridBagConstraints.REMAINDER)

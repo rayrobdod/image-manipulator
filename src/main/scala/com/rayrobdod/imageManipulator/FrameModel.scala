@@ -1,7 +1,7 @@
 /*
-	Copyright (c) 2012-2013, Raymond Dodge
+	Copyright (c) 2012-2014, Raymond Dodge
 	All rights reserved.
-	
+	 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 		* Redistributions of source code must retain the above copyright
@@ -25,38 +25,48 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package com.rayrobdod
+package com.rayrobdod.imageManipulator
 
-import java.awt.image.BufferedImage
+import java.awt.image.{BufferedImage, BufferedImageOp}
+import scala.collection.mutable.{Buffer => MSeq}
+
 
 /**
- * Classes used for the [[http://rayrobdod.name/programming/programs/imageManipulator/ Image Manipulator program]]
+ * 
+ * @since 2.0
  */
-package object imageManipulator {
+final class FrameModel (
+		val originalImage:BufferedImage,
+		val operation:Operation
+) {
+ 	lazy val originalImageScaled:BufferedImage =
+ 			scaleImage(originalImage)
+	
+	// Operations are mutable...
+	def afterImage:BufferedImage =
+			operation.apply(originalImage)
+	
+	// Operations are mutable...
+	def afterImageScaled:BufferedImage =
+			operation.apply(originalImageScaled)
+	
+}
 
-	/**
-	 * Creates an scaled version of src such that it is smaller than
-	 * a 400px by 400px square.
-	 * @since 2.0
-	 */
-	def scaleImage(src:BufferedImage):BufferedImage = {
-		if (src.getHeight > 400 && src.getHeight >= src.getWidth) {
-			val width = src.getWidth * 400 / src.getHeight
-			
-			val a = src.getData.createCompatibleWritableRaster(width, 400)
-			val b = new BufferedImage(src.getColorModel, a, true, new java.util.Hashtable())
-			b.createGraphics().drawImage(src, 0, 0, width, 400, null)
-			return b
-		} else if (src.getWidth > 400 && src.getHeight <= src.getWidth) {
-			val height = src.getHeight * 400 / src.getWidth
-			
-			val a = src.getData.createCompatibleWritableRaster(400, height)
-			val b = new BufferedImage(src.getColorModel, a, true, new java.util.Hashtable())
-			b.createGraphics().drawImage(src, 0, 0, 400, height, null)
-			return b
-		} else {
-			src
-		}
+
+/**
+ * @TODO util(?)
+ */
+final class Observer[A](initialValue:A) {
+	
+	private var value = initialValue
+	def apply() = this.value
+	def update(newValue:A) = {
+		value = newValue
+		changeListeners.foreach{(l:Function[A,_]) => l.apply(value)}
 	}
+	
+	// TODO: change type of listener to be better
+	private val changeListeners = MSeq[Function1[A,_]]()
+	def addChangeListener(l:Function1[A,_]) = {changeListeners += l}
 	
 }

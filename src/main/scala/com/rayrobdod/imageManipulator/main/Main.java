@@ -27,6 +27,8 @@
 package com.rayrobdod.imageManipulator.main;
 
 import com.rayrobdod.imageManipulator.ImageManipulateFrame;
+import com.rayrobdod.imageManipulator.operations.Identity;
+import com.rayrobdod.imageManipulator.FrameModel;
 import javax.swing.JOptionPane;
 import javax.swing.JFrame;
 
@@ -59,7 +61,9 @@ public final class Main
 						javax.imageio.ImageIO.read(new java.io.File(args[0]));
 				
 				if (image != null) {
-					frame.originalImage_$eq(image);
+					frame.model().update(
+						new FrameModel( image, new Identity())
+					);
 				} else {
 					JOptionPane.showMessageDialog(null,
 						"This application does not support the specified file's image format",

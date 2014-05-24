@@ -28,15 +28,14 @@
 package com.rayrobdod.imageManipulator.operations
 
 import com.rayrobdod.imageManipulator.Operation
-import java.awt.image.{BufferedImage, RenderedImage}
+import java.awt.image.{BufferedImage, RenderedImage, BufferedImageOp}
 import java.awt.Color
 
 /**
  * A image operation that makes one color and uses it as a mask; all pixels of
  * that color are turned into transparent pixels
  * @author Raymond Dodge
- * @version 2012 Jun 18 - 19
- * @version 2012 Jun 19 - moved from com.rayrobdod.imageManipulator.manipulations to com.rayrobdod.imageManipulator.operations
+ * @version 2.0
  */
 final class Transparentify extends Operation
 {
@@ -48,9 +47,10 @@ final class Transparentify extends Operation
 		val chooser = new javax.swing.JColorChooser
 	}
 	
-	override def apply(src:BufferedImage):BufferedImage =
+	/** @since 2.0 */
+	override def getImageOp:BufferedImageOp =
 	{
-		new TransparentifyImageOp(src.getRGB(0,0)).filter(src, null)
+		new TransparentifyImageOp((src) => new Color(src.getRGB(0,0)))
 	}
 }
 
@@ -62,10 +62,16 @@ final class Transparentify extends Operation
  * @version 2013 Feb 05 - now using trait LocalReplacement
  *
  * @constructor Makes a TransparentifyImageOp from a color
- * @param maskColor the color in the image to change to transparent
+ * @since 2.0
+ * @param 
  */
-final class TransparentifyImageOp(val maskColor:Color) extends NoResizeBufferedImageOp with LocalReplacement
+final class TransparentifyImageOp(val maskColor:Function1[BufferedImage,Color]) extends NoResizeBufferedImageOp with LocalReplacement
 {
+	/**
+	 * Makes a TransparentifyImageOp from a RGB color code
+	 * @param maskColor the color in the image to change to transparent
+	 */
+	 def this(maskColor:Color) = this{(a) => maskColor}
 	/**
 	 * Makes a TransparentifyImageOp from a RGB color code
 	 * @param maskRGB an RGB color code to make transparent
@@ -80,7 +86,7 @@ final class TransparentifyImageOp(val maskColor:Color) extends NoResizeBufferedI
 		{{(y:Int) =>
 			dst.setRGB(x, y, src.getRGB(x, y))
 			
-			if (src.getRGB(x,y) == maskColor.getRGB)
+			if (src.getRGB(x,y) == maskColor(src).getRGB)
 			{
 				dst.getAlphaRaster.setPixel(x,y,Array(0,0,0,0,0,0))
 			}

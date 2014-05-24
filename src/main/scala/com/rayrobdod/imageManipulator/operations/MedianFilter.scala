@@ -28,7 +28,7 @@
 package com.rayrobdod.imageManipulator.operations
 
 import com.rayrobdod.imageManipulator.Operation
-import java.awt.image.{BufferedImage, RenderedImage}
+import java.awt.image.{BufferedImage, RenderedImage, BufferedImageOp}
 import java.awt.Color
 import com.rayrobdod.swing.{ScalaSeqListModel, AbstractComboBoxModel}
 import javax.swing.JSlider
@@ -38,7 +38,7 @@ import javax.swing.event.{ChangeEvent, ChangeListener}
 /**
  * 
  * @author Raymond Dodge
- * @version 2013 Feb 06
+ * @version 2.0
  */
 final class MedianFilter extends Operation
 {
@@ -58,10 +58,11 @@ final class MedianFilter extends Operation
 			}
 		})
 	}
-				
-	override def apply(src:BufferedImage):BufferedImage =
+	
+	/** @since 2.0 */
+	override def getImageOp:BufferedImageOp =
 	{
-		new MedianFilterImageOp(divider.getValue * 2 + 1).filter(src, null)
+		new MedianFilterImageOp(divider.getValue * 2 + 1)
 	}
 }
 

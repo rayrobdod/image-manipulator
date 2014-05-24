@@ -37,18 +37,16 @@ import scala.collection.mutable.{Buffer => MSeq}
  */
 final class FrameModel (
 		val originalImage:BufferedImage,
-		val operation:Operation
+		val operation:BufferedImageOp
 ) {
  	lazy val originalImageScaled:BufferedImage =
  			scaleImage(originalImage)
 	
-	// Operations are mutable...
 	def afterImage:BufferedImage =
-			operation.apply(originalImage)
+			operation.filter(originalImage, null)
 	
-	// Operations are mutable...
 	def afterImageScaled:BufferedImage =
-			operation.apply(originalImageScaled)
+			operation.filter(originalImageScaled, null)
 	
 }
 

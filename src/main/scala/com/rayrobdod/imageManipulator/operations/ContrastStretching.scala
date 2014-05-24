@@ -28,12 +28,12 @@
 package com.rayrobdod.imageManipulator.operations
 
 import com.rayrobdod.imageManipulator.Operation
-import java.awt.image.BufferedImage
+import java.awt.image.BufferedImageOp
 
 /**
  * A contrast strech - maakes dark image areas darker and light areas lighter
  * @author Raymond Dodge
- * @version 2013 Feb 04
+ * @version 2.0
  */
 final class ContrastStretching extends Operation
 {
@@ -42,10 +42,11 @@ final class ContrastStretching extends Operation
 	override def setup(
 				panel:javax.swing.JPanel,
 				listener:java.awt.event.ActionListener):Any = {}
-				
-	override def apply(src:BufferedImage):BufferedImage =
+	
+	/** @since 2.0 */
+	override def getImageOp:BufferedImageOp =
 	{
-		new ContrastStretchingImageOp(0.03,0.03).filter(src, null)
+		new ContrastStretchingImageOp(0.03,0.03)
 	}
 	
 }

@@ -28,7 +28,7 @@
 package com.rayrobdod.imageManipulator.operations
 
 import com.rayrobdod.imageManipulator.Operation
-import java.awt.image.{BufferedImage}
+import java.awt.image.{BufferedImage, BufferedImageOp}
 import java.awt.Color
 import java.awt.event.{ActionEvent, ActionListener}
 
@@ -39,7 +39,7 @@ import java.awt.event.{ActionEvent, ActionListener}
  * correcting the mistake even harder.
  * 
  * @author Raymond Dodge
- * @version 2013 Mar 20
+ * @version 2.0
  */
 final class TetronicDejpeger extends Operation
 {
@@ -54,10 +54,11 @@ final class TetronicDejpeger extends Operation
 	override def setup(
 				panel:javax.swing.JPanel,
 				listener:ActionListener):Any = {}
-				
-	override def apply(src:BufferedImage):BufferedImage =
+	
+	/** @since 2.0 */
+	override def getImageOp:BufferedImageOp =
 	{
-		new Dejpeger(colors).filter(src, null)
+		new Dejpeger(colors)
 	}
 }
 

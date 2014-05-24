@@ -57,13 +57,6 @@ final class ImageManipulateFrame extends JFrame
 	}
 	
 	
-	object UpdateImageActionListener extends ActionListener
-	{
-		def actionPerformed(e:ActionEvent)
-		{
-			afterImageLabel.setIcon(new ImageIcon(model().afterImageScaled))
-		}
-	}
 	
 	object SetupCustomModeArea extends ActionListener
 	{
@@ -72,7 +65,7 @@ final class ImageManipulateFrame extends JFrame
 			modeCustomArea.removeAll
 			
 			val manipulation = modeChooser.getModel.getElementAt(modeChooser.getSelectedIndex)
-			manipulation.setup(modeCustomArea, UpdateImageActionListener)
+			manipulation.setup(modeCustomArea, UpdateFrameModelOperationActionListener)
 			
 			pack()
 		}
@@ -82,7 +75,7 @@ final class ImageManipulateFrame extends JFrame
 		def actionPerformed(e:ActionEvent) {
 			model.update(new FrameModel(
 				model().originalImage,
-				modeChooser.getModel.getElementAt(modeChooser.getSelectedIndex)
+				modeChooser.getModel.getElementAt(modeChooser.getSelectedIndex).getImageOp
 			))
 		}
 	}

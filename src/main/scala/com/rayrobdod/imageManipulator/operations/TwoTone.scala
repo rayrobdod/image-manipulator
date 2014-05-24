@@ -28,7 +28,7 @@
 package com.rayrobdod.imageManipulator.operations
 
 import com.rayrobdod.imageManipulator.Operation
-import java.awt.image.{BufferedImage, RenderedImage}
+import java.awt.image.{BufferedImage, RenderedImage, BufferedImageOp}
 import java.awt.Color
 import com.rayrobdod.swing.{ScalaSeqListModel, AbstractComboBoxModel}
 import javax.swing.JSlider
@@ -42,7 +42,7 @@ import javax.swing.event.{ChangeEvent, ChangeListener}
  * white
  * 
  * @author Raymond Dodge
- * @version 19 Jun 2012
+ * @version 2.0
  */
 final class TwoTone extends Operation
 {
@@ -67,10 +67,11 @@ final class TwoTone extends Operation
 			}
 		})
 	}
-				
-	override def apply(src:BufferedImage):BufferedImage =
+	
+	/** @since 2.0 */
+	override def getImageOp:BufferedImageOp =
 	{
-		new TwoToneImageOp(divider.getValue).filter(src, null)
+		new TwoToneImageOp(divider.getValue)
 	}
 }
 

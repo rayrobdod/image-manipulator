@@ -35,9 +35,7 @@ import java.awt.image.{BufferedImage, BufferedImageOp}
  * 
  * This is the both the Operation and the ImageOp.
  * @author Raymond Dodge
- * @version 2012 Jun 18
- * @version 2012 Jun 19 - moved from com.rayrobdod.imageManipulator.manipulations to com.rayrobdod.imageManipulator.operations
- * @version 2013 Feb 05 - now using trait LocalReplacement
+ * @version 2.0
  */
 final class Identity extends Operation with NoResizeBufferedImageOp with LocalReplacement 
 {
@@ -47,8 +45,8 @@ final class Identity extends Operation with NoResizeBufferedImageOp with LocalRe
 	override def setup(panel:javax.swing.JPanel,
 				actionListener:java.awt.event.ActionListener):Any = {}
 	
-	/** calls this.filter(inputImage, null) */
-	override def apply(inputImage:BufferedImage):BufferedImage = filter(inputImage, null)
+	/** @since 2.0 */
+	override def getImageOp:BufferedImageOp = this
 	
 	/** Makes the (x,y) pixel in dst the same as the (x,y) pixel in src */
 	def pixelReplaceFunction(src:BufferedImage, dst:BufferedImage, x:Int) = {

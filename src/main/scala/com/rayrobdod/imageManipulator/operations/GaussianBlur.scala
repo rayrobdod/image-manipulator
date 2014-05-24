@@ -28,7 +28,7 @@
 package com.rayrobdod.imageManipulator.operations
 
 import com.rayrobdod.imageManipulator.Operation
-import java.awt.image.{BufferedImage, Kernel, ConvolveOp}
+import java.awt.image.{BufferedImage, Kernel, ConvolveOp, BufferedImageOp}
 import com.rayrobdod.swing.{ScalaSeqListModel, AbstractComboBoxModel}
 import javax.swing.JSlider
 import java.awt.event.{ActionEvent, ActionListener}
@@ -37,7 +37,7 @@ import javax.swing.event.{ChangeEvent, ChangeListener}
 /**
  * A gaussian blur
  * @author Raymond Dodge
- * @version 2013 Aug 06
+ * @version 2.0
  */
 final class GaussianBlur extends Operation
 {
@@ -63,7 +63,8 @@ final class GaussianBlur extends Operation
 		})
 	}
 	
-	override def apply(src:BufferedImage):BufferedImage =
+	/** @since 2.0 */
+	override def getImageOp:BufferedImageOp =
 	{
 		val σ = divider.getValue * .1; // stdDev
 		val σ2 = σ * σ; // I tried using ²; it didn't work
@@ -90,7 +91,7 @@ final class GaussianBlur extends Operation
 				new java.awt.RenderingHints(new java.util.HashMap())
 		)
 		
-		op.filter(src, null)
+		op
 	}
 }
 

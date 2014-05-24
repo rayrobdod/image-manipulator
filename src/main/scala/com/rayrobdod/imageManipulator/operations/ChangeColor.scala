@@ -28,7 +28,7 @@
 package com.rayrobdod.imageManipulator.operations
 
 import com.rayrobdod.imageManipulator.Operation
-import java.awt.image.{BufferedImage, RenderedImage}
+import java.awt.image.{BufferedImage, RenderedImage, BufferedImageOp}
 import java.awt.Color
 import com.rayrobdod.swing.{ScalaSeqListModel, AbstractComboBoxModel}
 import javax.swing.JComboBox
@@ -37,7 +37,7 @@ import javax.swing.JComboBox
  * Swaps color channels and similar to make regions of a color look like
  * regions of another color
  * @author Raymond Dodge
- * @version 2012 Jun 19
+ * @version 2.0
  */
 final class ChangeColor extends Operation
 {
@@ -62,12 +62,13 @@ final class ChangeColor extends Operation
 		toCombo.addActionListener(listener)
 	}
 	
-	override def apply(src:BufferedImage):BufferedImage =
+	/** @since 2.0 */
+	override def getImageOp:BufferedImageOp =
 	{
 		new ColorChangeImageOp(
 			fromCombo.getModel.getElementAt(fromCombo.getSelectedIndex),
 			toCombo.getModel.getElementAt(toCombo.getSelectedIndex)
-		).filter(src, null)
+		)
 	}
 }
 

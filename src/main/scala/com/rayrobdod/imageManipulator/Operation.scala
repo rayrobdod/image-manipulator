@@ -60,10 +60,17 @@ trait Operation
 	/**
 	 * A hook to modify an image.
 	 * Should return a new image without modifying the original image
+	 * @deprecated
 	 * @param input the input image
 	 * @return a modified image
 	 */
-	def apply(input:BufferedImage):BufferedImage
+	final def apply(input:BufferedImage):BufferedImage = this.getImageOp.filter(input, null)
+	
+	/**
+	 * Retuns an ImageOp, based on the state of the setup
+	 * @since 2.0
+	 */
+	def getImageOp:BufferedImageOp
 	
 	// Temporary Stopgap
 	override def toString = name

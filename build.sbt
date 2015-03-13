@@ -8,7 +8,7 @@ version := "1.0.6-SNAPSHOT"
 
 scalaVersion := "2.9.3"
 
-crossScalaVersions ++= Seq("2.11.2", "2.10.3", "2.9.1")
+crossScalaVersions ++= Seq("2.11.6", "2.10.5", "2.9.3", "2.9.2", "2.9.1")
 
 libraryDependencies += ("com.rayrobdod" %% "utilities" % "1.0.0")
 
@@ -22,6 +22,17 @@ packageOptions in (Compile, packageBin) <+= (scalaVersion, sourceDirectory).map{
     manifest.getAttributes("scala/").putValue("Implementation-Version", scalaVersion)
     //
     Package.JarManifest( manifest )
+}
+
+excludeFilter in unmanagedSources in Compile := new FileFilter{
+	def accept(n:File) = {
+		val abPath = n.getAbsolutePath().replace('\\', '/')
+		(
+			(abPath endsWith "DisambigMain.java") ||
+			(abPath endsWith "Win7Main.java") ||
+			false
+		)
+	}
 }
 
 dependencyClasspath in Compile += new Attributed( new File("C:/Program Files/Java/jdk1.7.0_21/jre/lib/javaws.jar"))(AttributeMap.empty)

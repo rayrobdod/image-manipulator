@@ -8,6 +8,9 @@
 -dontwarn scala.**,com.sun.**
 
 
+-keep class com.rayrobdod.imageManipulator.ImageManipulateFrame
+
+
 -keep class com.rayrobdod.imageio.plugins.**
 
 -keep public class com.rayrobdod.imageManipulator.operations.* extends com.rayrobdod.imageManipulator.Operation

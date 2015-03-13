@@ -79,7 +79,7 @@ final class SwingLoadListener(val setImage:Function1[BufferedImage, Any]) extend
 				
 				if (image != null) {
 					setImage(image)
-					if (Taskbar.tryLoadWindowsLibrary()) {
+					if (false) { // if (Taskbar.tryLoadWindowsLibrary()) {
 						Taskbar.addToRecentDocs(chooser.getSelectedFile().getPath())
 					}
 				} else {

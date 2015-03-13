@@ -1,2 +1,2 @@
-addSbtPlugin("com.typesafe.sbt" % "sbt-proguard" % "0.2.1")
+addSbtPlugin("com.typesafe.sbt" % "sbt-proguard" % "0.2.2")
 

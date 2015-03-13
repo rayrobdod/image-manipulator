@@ -8,7 +8,7 @@ version := "1.0.6-SNAPSHOT"
 
 scalaVersion := "2.9.3"
 
-crossScalaVersions ++= Seq("2.11.0-M4", "2.10.2", "2.9.1")
+crossScalaVersions ++= Seq("2.11.6", "2.10.5", "2.9.3", "2.9.2", "2.9.1")
 
 libraryDependencies += ("com.rayrobdod" %% "utilities" % "1.0.0")
 

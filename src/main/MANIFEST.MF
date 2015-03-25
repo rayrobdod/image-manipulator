@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-X-ALT-Main-Class: com.rayrobdod.imageManipulator.main.Main
+Main-Class: com.rayrobdod.imageManipulator.main.Main
 X-ALT2-Main-Class: com.rayrobdod.imageManipulator.main.Win7Main
-Main-Class: com.rayrobdod.imageManipulator.main.DisambigMain
+X-ALT-Main-Class: com.rayrobdod.imageManipulator.main.DisambigMain
 Implementation-Vendor: Raymond Dodge
 Implementation-URL: http://rayrobdod.name/programming/java/programs/imageManipulator/
 Implementation-Title: Image Manipulator

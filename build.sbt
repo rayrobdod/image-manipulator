@@ -4,7 +4,7 @@ organization := "com.rayrobdod"
 
 organizationHomepage := Some(new URL("http://rayrobdod.name/"))
 
-version := "1.0.6-SNAPSHOT"
+version := "1.6-SNAPSHOT"
 
 scalaVersion := "2.9.3"
 
@@ -37,13 +37,14 @@ excludeFilter in unmanagedSources in Compile := new FileFilter{
 
 dependencyClasspath in Compile += new Attributed( new File("C:/Program Files/Java/jdk1.7.0_21/jre/lib/javaws.jar"))(AttributeMap.empty)
 
+unmanagedResources in Compile += baseDirectory.value / "LICENSE.txt"
 
 //normalizedName.????
 //addArtifact( Artifact("image-manipulator", "pack200+gz", "gz"), packageBinPack )
 
 
 
-(managedResources in Compile) <+= (resourceManaged in Compile).map{new File(_, "com_rayrobdod_util_Win7Taskbar.dll")}
+//(managedResources in Compile) <+= (resourceManaged in Compile).map{new File(_, "com_rayrobdod_util_Win7Taskbar.dll")}
 
 // proguard
 proguardSettings
@@ -64,11 +65,4 @@ ProguardKeys.inputFilter in Proguard := { file =>
 artifactPath in Proguard <<= (artifactPath in Proguard, proguardType, version).apply{(orig:File, level:String, version:String) =>
 	orig.getParentFile() / ("imageManipulator-" + version + "-full-" + level + ".jar")
 }
-
-// anon-fun-reduce
-//autoCompilerPlugins := true
-
-//addCompilerPlugin("com.rayrobdod" %% "anon-fun-reduce" % "1.0.0")
-
-//unmanagedSources in Compile += new File("""C:\Users\Raymond\Documents\Programming\Java\ScalaParserPlugin\src\CommonAnonFuns.scala""")
 

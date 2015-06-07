@@ -28,7 +28,7 @@ object ImageManipulatorBuild extends Build {
 	lazy val root = Project(
 			id = "imageManipulator",
 			base = file("."),
-			settings = Defaults.defaultSettings ++
+			settings = Defaults.coreDefaultSettings ++
 					copyDllTasks
 	)
 }

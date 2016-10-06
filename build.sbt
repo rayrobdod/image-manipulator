@@ -6,22 +6,37 @@ organizationHomepage := Some(new URL("http://rayrobdod.name/"))
 
 version := "1.6-SNAPSHOT"
 
-scalaVersion := "2.9.3"
+scalaVersion := "2.11.8"
 
-crossScalaVersions ++= Seq("2.11.6", "2.10.5", "2.9.3", "2.9.2", "2.9.1")
+crossScalaVersions ++= Seq("2.11.8")
 
-libraryDependencies += ("com.rayrobdod" %% "utilities" % "1.0.0")
+resolvers += ("rayrobdod" at "http://ivy.rayrobdod.name/")
+
+libraryDependencies += ("com.rayrobdod" %% "utilities" % "20160112")
+
+dependencyClasspath in Compile += new Attributed( new File("C:/Program Files/Java/jdk1.8.0_91/jre/lib/javaws.jar"))(AttributeMap.empty)
 
 exportJars := true
 
 mainClass := Some("com.rayrobdod.imageManipulator.main.Main")
 
-packageOptions in (Compile, packageBin) <+= (scalaVersion, sourceDirectory).map{(scalaVersion:String, srcDir:File) =>
-    val manifest = new java.util.jar.Manifest(new java.io.FileInputStream(srcDir + "/main/MANIFEST.MF"))
-    //
-    manifest.getAttributes("scala/").putValue("Implementation-Version", scalaVersion)
-    //
-    Package.JarManifest( manifest )
+javacOptions in Compile ++= Seq("-Xlint:deprecation", "-Xlint:unchecked", "-source", "1.7", "-target", "1.7")
+
+scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-target:jvm-1.7")
+
+scalacOptions ++= Seq("-Ywarn-unused-import", "-Ywarn-unused", "-Xlint:_", "-Xlint:-adapted-args")
+
+
+packageOptions in (Compile, packageBin) += {
+	val manifest = new java.util.jar.Manifest()
+	manifest.getEntries().put("scala/", {
+		val attrs = new java.util.jar.Attributes()
+		attrs.putValue("Implementation-Title", "Scala")
+		attrs.putValue("Implementation-URL", "http://www.scala-lang.org/")
+		attrs.putValue("Implementation-Version", scalaVersion.value)
+		attrs
+	})
+	Package.JarManifest( manifest )
 }
 
 excludeFilter in unmanagedSources in Compile := new FileFilter{
@@ -35,25 +50,23 @@ excludeFilter in unmanagedSources in Compile := new FileFilter{
 	}
 }
 
-dependencyClasspath in Compile += new Attributed( new File("C:/Program Files/Java/jdk1.7.0_21/jre/lib/javaws.jar"))(AttributeMap.empty)
-
-unmanagedResources in Compile += baseDirectory.value / "LICENSE.txt"
-
-//normalizedName.????
-//addArtifact( Artifact("image-manipulator", "pack200+gz", "gz"), packageBinPack )
 
 
+licenses += (("3-point BSD", new URL("http://opensource.org/licenses/BSD-3-Clause") ))
 
-//(managedResources in Compile) <+= (resourceManaged in Compile).map{new File(_, "com_rayrobdod_util_Win7Taskbar.dll")}
+mappings in (Compile, packageSrc) += ((baseDirectory.value / "LICENSE.txt"), "LICENSE.txt" )
+
+mappings in (Compile, packageBin) += ((baseDirectory.value / "LICENSE.txt"), "LICENSE.txt" )
+
 
 // proguard
 proguardSettings
 
 proguardType := "mini" 
 
-ProguardKeys.inputs in Proguard ~= {(x:Seq[File]) => x.dropRight(1)}
+ProguardKeys.proguardVersion in Proguard := "5.2.1"
 
-ProguardKeys.options in Proguard <+= (baseDirectory in Compile, proguardType).map{"-include '"+_+"/"+_+".proguard'"}
+ProguardKeys.inputs in Proguard ~= {(x:Seq[File]) => x.dropRight(1)}
 
 ProguardKeys.inputFilter in Proguard := { file =>
   if (file.name.startsWith("image-manipulator"))

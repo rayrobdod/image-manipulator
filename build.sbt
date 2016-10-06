@@ -4,6 +4,8 @@ organization := "com.rayrobdod"
 
 organizationHomepage := Some(new URL("http://rayrobdod.name/"))
 
+homepage := Some(new URL("http://rayrobdod.name/programming/java/programs/imageManipulator/"))
+
 version := "1.6-SNAPSHOT"
 
 scalaVersion := "2.11.8"
@@ -34,6 +36,27 @@ packageOptions in (Compile, packageBin) += {
 		attrs.putValue("Implementation-Title", "Scala")
 		attrs.putValue("Implementation-URL", "http://www.scala-lang.org/")
 		attrs.putValue("Implementation-Version", scalaVersion.value)
+		attrs
+	})
+	manifest.getEntries().put("com/rayrobdod/imageManipulator/frameIcon.png", {
+		val attrs = new java.util.jar.Attributes()
+		attrs.putValue("Content-Type", "image/png")
+		attrs
+	})
+	manifest.getEntries().put("com/rayrobdod/imageManipulator/frameIcon.ico", {
+		val attrs = new java.util.jar.Attributes()
+		attrs.putValue("Content-Type", "image/x-icon")
+		// attrs.putValue("Content-Type", "image/vnd.microsoft.icon")
+		attrs
+	})
+	manifest.getEntries().put("CHANGES.txt", {
+		val attrs = new java.util.jar.Attributes()
+		attrs.putValue("Content-Type", "text/plain")
+		attrs
+	})
+	manifest.getEntries().put("README.txt", {
+		val attrs = new java.util.jar.Attributes()
+		attrs.putValue("Content-Type", "text/plain")
 		attrs
 	})
 	Package.JarManifest( manifest )

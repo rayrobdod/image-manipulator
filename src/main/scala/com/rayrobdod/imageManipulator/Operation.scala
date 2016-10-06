@@ -30,7 +30,7 @@ package com.rayrobdod.imageManipulator
 import scala.collection.immutable.Seq
 import scala.collection.JavaConversions.iterableAsScalaIterable
 import java.util.ServiceLoader
-import java.awt.image.{BufferedImage, BufferedImageOp}
+import java.awt.image.BufferedImage
 
 /**
  * A funtion that changes an image into an new image using some type of

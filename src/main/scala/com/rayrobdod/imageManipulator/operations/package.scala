@@ -35,6 +35,9 @@ import java.awt.geom.Point2D
  */
 package object operations
 {
+}
+
+package operations {
 	/**
 	 * A trait that indicates a [[java.awt.image.BufferedImageOp]] that
 	 * will not change the size of the BufferedImage or translate any pixels

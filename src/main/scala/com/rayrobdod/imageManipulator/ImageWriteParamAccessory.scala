@@ -38,7 +38,6 @@ import javax.swing.filechooser.FileFilter
 import javax.imageio.ImageWriteParam
 import javax.imageio.spi.ImageWriterSpi
 import com.rayrobdod.swing.GridBagConstraintsFactory
-import javax.swing.BorderFactory.{createEmptyBorder => EmptyBorder}
 import javax.swing.SwingUtilities.{invokeLater => invokeOnAWT}
 import java.text.NumberFormat.{getIntegerInstance => NumberFormat}
 

@@ -30,8 +30,8 @@ package com.rayrobdod.imageManipulator
 import java.awt.event.{ActionListener, ActionEvent}
 import javax.swing.{JFileChooser, JOptionPane}
 import javax.imageio.ImageIO
-import javax.swing.filechooser.{FileNameExtensionFilter, FileFilter}
-import java.awt.image.{RenderedImage, BufferedImage}
+import javax.swing.filechooser.FileFilter
+import java.awt.image.BufferedImage
 import java.io.IOException
 import javax.imageio.spi.{ImageReaderSpi, IIORegistry}
 import com.rayrobdod.util.Taskbar;

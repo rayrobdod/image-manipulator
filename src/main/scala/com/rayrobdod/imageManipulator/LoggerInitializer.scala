@@ -90,7 +90,7 @@ final class SwingWindowHandler extends Handler
 			val x = record.getThrown
 			
 			import java.awt.Frame
-			import javax.swing.{JDialog, JLabel, JTextArea}
+			import javax.swing.{JDialog, JTextArea}
 			import java.io.{StringWriter, PrintWriter}
 			
 			new JDialog(null:Frame, x.getClass.getName) {
@@ -106,8 +106,7 @@ final class SwingWindowHandler extends Handler
 		if (record.getThrown == null)
 		{
 			import java.awt.Frame
-			import javax.swing.{JDialog, JLabel, JTextArea}
-			import java.io.{StringWriter, PrintWriter}
+			import javax.swing.{JDialog, JTextArea}
 			
 			new JDialog(null:Frame, "") {
 				add(new JTextArea(

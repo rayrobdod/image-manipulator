@@ -24,7 +24,7 @@ javacOptions in Compile ++= Seq("-Xlint:deprecation", "-Xlint:unchecked", "-sour
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-target:jvm-1.7")
 
-scalacOptions ++= Seq("-Ywarn-unused-import", "-Ywarn-unused", "-Xlint:_", "-Xlint:-adapted-args")
+scalacOptions ++= Seq("-Ywarn-unused-import", "-Ywarn-unused", "-Xlint:_")
 
 
 packageOptions in (Compile, packageBin) += {

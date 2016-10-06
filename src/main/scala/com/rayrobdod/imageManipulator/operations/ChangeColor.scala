@@ -28,7 +28,7 @@
 package com.rayrobdod.imageManipulator.operations
 
 import com.rayrobdod.imageManipulator.Operation
-import java.awt.image.{BufferedImage, RenderedImage}
+import java.awt.image.BufferedImage
 import java.awt.Color
 import com.rayrobdod.swing.{ScalaSeqListModel, AbstractComboBoxModel}
 import javax.swing.JComboBox

@@ -28,9 +28,9 @@
 package com.rayrobdod.imageManipulator.operations
 
 import com.rayrobdod.imageManipulator.Operation
-import java.awt.image.{BufferedImage}
+import java.awt.image.BufferedImage
 import java.awt.Color
-import java.awt.event.{ActionEvent, ActionListener}
+import java.awt.event.ActionListener
 
 /**
  * Tetronic Oscillocope images are encoded as JPEGs.

@@ -30,7 +30,7 @@ package com.rayrobdod.imageManipulator
 import java.awt.event.{ActionListener, ActionEvent}
 import javax.swing.JFileChooser
 import javax.imageio.ImageIO
-import javax.swing.filechooser.{FileNameExtensionFilter, FileFilter}
+import javax.swing.filechooser.FileFilter
 import java.awt.image.RenderedImage
 import java.io.IOException
 import javax.imageio.spi.{ImageWriterSpi, IIORegistry}

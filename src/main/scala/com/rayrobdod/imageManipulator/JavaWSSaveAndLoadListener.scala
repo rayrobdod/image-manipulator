@@ -27,18 +27,12 @@
 package com.rayrobdod.imageManipulator
 
 import java.awt.event.{ActionListener, ActionEvent}
-import javax.swing.filechooser.{FileNameExtensionFilter, FileFilter}
 import java.awt.image.{RenderedImage, BufferedImage}
-import java.io.IOException
 import javax.jnlp.{ServiceManager, FileOpenService, FileSaveService}
 import javax.jnlp.UnavailableServiceException;
-import javax.imageio.{ImageIO, ImageWriter, ImageWriteParam}
-import javax.imageio.ImageIO.{getReaderFileSuffixes => readerSuffixes,
-			getWriterFileSuffixes => writerSuffixes
-}
+import javax.imageio.{ImageIO, ImageWriteParam}
+import javax.imageio.ImageIO.{getReaderFileSuffixes => readerSuffixes}
 import javax.imageio.spi.{ImageWriterSpi, IIORegistry}
-import LoggerInitializer.{javaWSSaveLogger => saveLogger}
-import java.util.logging.{Level, LogRecord}
 
 /**
  * An actionlistener that asks the JavaWS services to open a file dialog and read an Image file
@@ -78,13 +72,9 @@ final class JavaWSLoadListener(val setImage:Function1[BufferedImage, Any]) exten
  */
 final class JavaWSSaveListener(val getImage:Function0[RenderedImage]) extends ActionListener
 {
-	// Apparently, JavaWS doesn't give permission to use logging at all.
 	def actionPerformed(e:ActionEvent)
 	{
 		try {
-//			saveLogger.entering("JavaWSSaveListener", "actionPerformed")
-//			new SwingWindowHandler().publish(new LogRecord(Level.FINE, "entering JavaWSSaveLsitener"))
-			
 			import java.io.{PipedInputStream, PipedOutputStream}
 			
 			// this cannot run on the AWT thread
@@ -95,12 +85,9 @@ final class JavaWSSaveListener(val getImage:Function0[RenderedImage]) extends Ac
 					val pipedIn = new PipedInputStream()
 					val pipedOut = new PipedOutputStream(pipedIn)
 					
-//					saveLogger.entering("JavaWSSaveListener$AnonRunnable", "run")
 					val format = JavaWSSaveAndLoadListener.userAskedFileFormat()
-//					saveLogger.log(Level.FINER, "format is :" + format)
 					
 					format.foreach{(format:(ImageWriterSpi, Option[ImageWriteParam])) =>
-//						saveLogger.entering("JavaWSSaveListener$AnonRunnable$anonForEach", "apply", format);
 						
 						val (writerSPI, param) = format
 						new Thread(new Runnable() {

@@ -28,7 +28,7 @@
 package com.rayrobdod.imageManipulator.operations
 
 import com.rayrobdod.imageManipulator.Operation
-import java.awt.image.{BufferedImage, BufferedImageOp}
+import java.awt.image.BufferedImage
 
 /**
  * An identity image manipulation

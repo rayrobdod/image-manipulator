@@ -29,7 +29,6 @@ package com.rayrobdod.imageManipulator.operations
 
 import com.rayrobdod.imageManipulator.Operation
 import java.awt.image.{BufferedImage, Kernel, ConvolveOp}
-import com.rayrobdod.swing.{ScalaSeqListModel, AbstractComboBoxModel}
 import javax.swing.JSlider
 import java.awt.event.{ActionEvent, ActionListener}
 import javax.swing.event.{ChangeEvent, ChangeListener}

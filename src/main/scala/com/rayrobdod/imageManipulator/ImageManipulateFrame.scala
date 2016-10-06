@@ -28,9 +28,9 @@
 package com.rayrobdod.imageManipulator
 
 import com.rayrobdod.swing.{ScalaSeqListModel, AbstractComboBoxModel}
-import java.awt.{GridBagLayout, GridBagConstraints, Image}
+import java.awt.{GridBagLayout, GridBagConstraints}
 import java.awt.event.{ActionListener, ActionEvent}
-import java.awt.image.{BufferedImage, RenderedImage}
+import java.awt.image.BufferedImage
 import javax.swing.{JLabel, JPanel, JButton, JComboBox, JFrame, ImageIcon}
 import java.awt.image.BufferedImage.{TYPE_INT_ARGB => alpha}
 import com.rayrobdod.swing.GridBagConstraintsFactory

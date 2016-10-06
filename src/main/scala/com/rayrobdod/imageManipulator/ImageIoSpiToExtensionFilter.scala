@@ -27,11 +27,6 @@
 
 package com.rayrobdod.imageManipulator
 
-import javax.imageio.ImageIO
-import javax.imageio.ImageIO.{getReaderFileSuffixes => readerSuffixes,
-			getReaderMIMETypes => readerMime,
-			getReaderFormatNames => readerFormats
-}
 import javax.swing.filechooser.{FileNameExtensionFilter, FileFilter}
 import javax.imageio.spi.ImageReaderWriterSpi;
 

@@ -36,8 +36,6 @@ import javax.swing.JComboBox
 /**
  * Swaps color channels and similar to make regions of a color look like
  * regions of another color
- * @author Raymond Dodge
- * @version 2012 Jun 19
  */
 final class ChangeColor extends Operation
 {
@@ -72,10 +70,6 @@ final class ChangeColor extends Operation
 }
 
 /**
- * 
- * @author Raymond Dodge
- * @version 2012 Jun 19
- * @version 2013 Feb 03 - Colors._ are now vals instead of objects
  */
 object ChangeColor
 {
@@ -119,10 +113,6 @@ import com.rayrobdod.imageManipulator.operations.ChangeColor.Colors
 /**
  * Swaps color channels and similar to make regions of a color look like
  * regions of another color
- * 
- * @author Raymond Dodge
- * @version 2012 Jun 19
- * @version 2013 Feb 05 - now using trait LocalReplacement
  */
 final class ColorChangeImageOp(val from:Colors.Value, val to:Colors.Value) extends NoResizeBufferedImageOp with LocalReplacement 
 {

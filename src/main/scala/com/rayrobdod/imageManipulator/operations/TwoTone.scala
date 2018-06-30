@@ -39,9 +39,6 @@ import javax.swing.event.{ChangeEvent, ChangeListener}
  * and comparing it with a threshold: if the value is greater than
  * the threshold, the pixel becomes black; otherwise the pixel becomes
  * white
- * 
- * @author Raymond Dodge
- * @version 19 Jun 2012
  */
 final class TwoTone extends Operation
 {
@@ -78,10 +75,6 @@ final class TwoTone extends Operation
  * and comparing it with a threshold: if the value is greater than
  * the threshold, the pixel becomes black; otherwise the pixel becomes
  * white
- * 
- * @author Raymond Dodge
- * @version 19 Jun 2012
- * @version 2013 Feb 05 - now using trait LocalReplacement
  */
 final class TwoToneImageOp(val threshold:Int) extends NoResizeBufferedImageOp with LocalReplacement
 {

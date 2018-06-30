@@ -31,9 +31,7 @@ import com.rayrobdod.imageManipulator.Operation
 import java.awt.image.BufferedImage
 
 /**
- * A contrast strech - maakes dark image areas darker and light areas lighter
- * @author Raymond Dodge
- * @version 2013 Feb 04
+ * A contrast stretch - makes dark image areas darker and light areas lighter
  */
 final class ContrastStretching extends Operation
 {

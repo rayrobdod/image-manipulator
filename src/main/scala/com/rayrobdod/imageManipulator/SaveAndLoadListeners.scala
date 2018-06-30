@@ -31,9 +31,6 @@ import java.awt.event.ActionListener
 
 /**
  * An object molding methods to select between Load or Save listeners.
- * 
- * @author Raymond Dodge
- * @version 2012 Sept 10
  */
 object SaveAndLoadListeners
 {

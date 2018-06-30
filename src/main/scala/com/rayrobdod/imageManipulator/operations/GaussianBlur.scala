@@ -34,9 +34,7 @@ import java.awt.event.{ActionEvent, ActionListener}
 import javax.swing.event.{ChangeEvent, ChangeListener}
 
 /**
- * A gaussian blur
- * @author Raymond Dodge
- * @version 2013 Aug 06
+ * A Gaussian blur
  */
 final class GaussianBlur extends Operation
 {

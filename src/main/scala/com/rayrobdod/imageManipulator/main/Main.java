@@ -32,10 +32,6 @@ import javax.swing.JFrame;
 
 /**
  * A main method for the image manipulator program
- * 
- * @author Raymond Dodge
- * @since 1.0.0
- * @version 1.0.6
  */
 public final class Main
 {

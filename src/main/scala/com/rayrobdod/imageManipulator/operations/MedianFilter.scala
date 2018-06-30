@@ -35,9 +35,6 @@ import java.awt.event.{ActionEvent, ActionListener}
 import javax.swing.event.{ChangeEvent, ChangeListener}
 
 /**
- * 
- * @author Raymond Dodge
- * @version 2013 Feb 06
  */
 final class MedianFilter extends Operation
 {
@@ -66,9 +63,6 @@ final class MedianFilter extends Operation
 
 /**
  * Performs a MedianFilter on an image
- * 
- * @author Raymond Dodge
- * @version 2013 Feb 06
  * @param windowSize the size of the window to take the median of
  */
 final class MedianFilterImageOp(val windowSize:Int) extends NoResizeBufferedImageOp with LocalReplacement
@@ -100,9 +94,6 @@ final class MedianFilterImageOp(val windowSize:Int) extends NoResizeBufferedImag
 
 
 /**
- * 
- * @author Raymond Dodge
- * @version 2013 Feb 06
  */
 object AverageGreyscaleColorOrdering extends Ordering[Color] {
 	override def compare(a:Color, b:Color) = {
@@ -110,29 +101,3 @@ object AverageGreyscaleColorOrdering extends Ordering[Color] {
 				(b.getRed + b.getGreen + b.getBlue)
 	}
 }
-
-/*
- * Okay, then. Apparently Ordering isn't specialized, and there's no speed improvement
- *  in wrapping the int in an Int instead of a Color.  
- *
- * @author Raymond Dodge
- * @version 2013 Jun 07
-object AverageGreyscaleColorAsIntOrdering extends Ordering[Int] {
-	override def compare(a:Int, b:Int) = {
-		java.lang.Integer.compare(
-				((a & 0xFF) + (a >> 8 & 0xFF) + (a >> 16 & 0xFF)),
-				((b & 0xFF) + (b >> 8 & 0xFF) + (b >> 16 & 0xFF))
-		)
-	}
-}*/
-
-/*
- * @author Raymond Dodge
- * @version 2013 Feb 06
-object LuminocityGreyscaleColorOrdering extends Ordering[Color] {
-	override def compare(a:Color, b:Color) = {
-		(0.2126 * a.getRed + 0.7152 * a.getGreen + 0.0722 * a.getBlue) compareTo
-				(0.2126 * b.getRed + 0.7152 * b.getGreen + 0.0722 * b.getBlue)
-	}
-}
-*/

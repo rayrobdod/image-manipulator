@@ -32,11 +32,6 @@ import javax.imageio.spi.ImageReaderWriterSpi;
 
 /**
  * A function that creates a File Filter for the specified ImageReaderWriterSpi
- * 
- * @author Raymond Dodge
- * @version 2012 Nov 19
- * @version 2013 Jul 24 - now capable of dealing with null or empty FileSuffix lists
- * @since 1.0.3
  */
 object ImageIoSpiToExtensionFilter extends Function1[ImageReaderWriterSpi, FileFilter]
 {

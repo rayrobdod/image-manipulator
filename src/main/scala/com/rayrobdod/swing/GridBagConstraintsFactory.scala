@@ -21,7 +21,6 @@ import java.awt.{GridBagConstraints, Insets}
  * 
  * This uses the new method of GridBagConstraints; the main difference is that this has default parameters.
  * 
- * @version 2013 Jan 29
  * @note worth having a val for a default GridBagConstraints?
  */
 object GridBagConstraintsFactory {

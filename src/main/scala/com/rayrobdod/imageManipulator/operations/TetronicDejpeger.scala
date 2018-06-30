@@ -37,9 +37,6 @@ import java.awt.event.ActionListener
  * This is despite the fact that their images use 7 colors, before jpegification.
  * It is a huge waste of space. Not even counting the fact that it makes
  * correcting the mistake even harder.
- * 
- * @author Raymond Dodge
- * @version 2013 Mar 20
  */
 final class TetronicDejpeger extends Operation
 {
@@ -62,9 +59,6 @@ final class TetronicDejpeger extends Operation
 }
 
 /**
- * 
- * @author Raymond Dodge
- * @version 2013 Mar 20
  */
 final class Dejpeger(val colors:Seq[Color]) extends NoResizeBufferedImageOp with LocalReplacement
 {

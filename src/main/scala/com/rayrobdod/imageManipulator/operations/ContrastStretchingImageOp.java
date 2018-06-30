@@ -42,13 +42,6 @@ import java.awt.geom.Point2D;
  * directly translated from a VHDL file - aside from the allowing to
  * support colors and not just greyscale. Probably the main point of
  * iffiness, and the impelmented-in-java-not-scala-ness.
- * 
- * @author Raymond Dodge
- * @version 2013 Feb 04
- * @version 2013 Jun 05 - making createCompatibleDestImage use BufferedImage's
-			(colormodel, raster, boolean, map) constructor rather than the
-			(int, int, int) constructor.
- * @version 2013 Jun 05 - calling createCompatibleDestImage with a non-null ColorModel
  */
 public final class ContrastStretchingImageOp implements BufferedImageOp
 {

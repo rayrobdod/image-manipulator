@@ -38,10 +38,6 @@ import javax.imageio.spi.{ImageWriterSpi, IIORegistry}
  * An actionlistener that asks the JavaWS services to open a file dialog and read an Image file
  * 
  * @param setImage a function that the listener will put the obtained image into
- * @author Raymond Dodge
- * @version 2012 Sept 10
- * @version 2013 Jun 03 - closing the input stream
- * @since 1.0.2
  */
 final class JavaWSLoadListener(val setImage:Function1[BufferedImage, Any]) extends ActionListener
 {
@@ -65,10 +61,6 @@ final class JavaWSLoadListener(val setImage:Function1[BufferedImage, Any]) exten
  * An actionlistener that asks the JavaWS services to open a file dialog and read an Image file
  * 
  * @param setImage a function that the listener will put the obtained image into
- * @author Raymond Dodge
- * @version 2012 Sept 10
- * @version 2012 Sept 11 - failed attempt at inserting logging to figure out why this thing refuses to work.
- * @version 2012 Sept 11 - fixing so that this works - more threads!
  */
 final class JavaWSSaveListener(val getImage:Function0[RenderedImage]) extends ActionListener
 {
@@ -123,9 +115,6 @@ final class JavaWSSaveListener(val getImage:Function0[RenderedImage]) extends Ac
 
 /**
  * Caches FileOpenService and FileSaveService instances.
- * 
- * @author Raymond Dodge
- * @version 2012 Sept 10
  */
 object JavaWSSaveAndLoadListener
 {

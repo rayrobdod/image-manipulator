@@ -46,10 +46,6 @@ import java.text.NumberFormat.{getIntegerInstance => NumberFormat}
  *
  * Currently only shows options for compression or 'unknown' options
  * 
- * @author Raymond Dodge
- * @version 2012 Dec 27-28
- * @version 2013 Feb 24 implementing CustomAccessory
- * @version 2013 Feb 24 implementing ProgressiveAccessory and TilingAccessory
  * @note the other two are Tiling and Progressive
  */
 final class ImageWriteParamAccessory(

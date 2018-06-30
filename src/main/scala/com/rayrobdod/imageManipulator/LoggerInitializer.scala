@@ -65,8 +65,6 @@ private[imageManipulator] object LoggerInitializer
  * An attempt at creating a Handler that JavaWS will allow. And then I
  * discovered that logging is disallowed - not just the console or files.
  * 
- * @author Raymond Dodge
- * @version 2012 Sept 12
  * @todo move to util package if this can be used elsewhere
  */
 final class SwingWindowHandler extends Handler

@@ -34,9 +34,6 @@ import java.awt.Color
 /**
  * A image operation that makes one color and uses it as a mask; all pixels of
  * that color are turned into transparent pixels
- * @author Raymond Dodge
- * @version 2012 Jun 18 - 19
- * @version 2012 Jun 19 - moved from com.rayrobdod.imageManipulator.manipulations to com.rayrobdod.imageManipulator.operations
  */
 final class Transparentify extends Operation
 {
@@ -57,9 +54,6 @@ final class Transparentify extends Operation
 /**
  * A image operation that makes one color and uses it as a mask; all pixels of
  * that color are turned into transparent pixels
- * @author Raymond Dodge
- * @version 2012 Jun 19
- * @version 2013 Feb 05 - now using trait LocalReplacement
  *
  * @constructor Makes a TransparentifyImageOp from a color
  * @param maskColor the color in the image to change to transparent

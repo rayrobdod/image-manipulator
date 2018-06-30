@@ -31,9 +31,6 @@ import javax.swing.{ListModel, AbstractListModel, ComboBoxModel}
 
 /** 
  * A ListModel backed by a Scala Seq.
- * @author Raymond Dodge
- * @version 01 Feb 2012
- * @version 19 Jun 2012 - moving from com.rayrobdod.deductionTactics.test to com.rayrobdod.swing
  */
 class ScalaSeqListModel[A](backing:Seq[A]) extends AbstractListModel[A]
 {
@@ -43,10 +40,6 @@ class ScalaSeqListModel[A](backing:Seq[A]) extends AbstractListModel[A]
 
 /** 
  * A ListModel with getSize elements, one each from 1 to getSize.
- * @author Raymond Dodge
- * @version 01 Feb 2012
- * @version 19 Jun 2012 - moving from com.rayrobdod.deductionTactics.test to com.rayrobdod.swing
- * @version 09 Nov 2012 - apparently this needed to be templated on an Integer, not an int.
  */
 class RangeListModel(override val getSize:Int) extends AbstractListModel[java.lang.Integer]
 {
@@ -55,8 +48,6 @@ class RangeListModel(override val getSize:Int) extends AbstractListModel[java.la
 }
 
 /**
- * @author Raymond Dodge
- * @version 19 Jun 2012
  */
 trait AbstractComboBoxModel[E] extends ComboBoxModel[E]
 {

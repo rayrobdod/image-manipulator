@@ -39,18 +39,6 @@ import scala.collection.JavaConversions.asScalaIterator
 
 /**
  * An actionlistener that pops up a [[JFileChooser]], reads the image and then runs it as the input to the provided funtion
- * 
- * @author Raymond Dodge
- * @version 2012 Jun 18
- * @version 2012 Jun 19 - making filechooser persistent
- * @version 2012 Aug 16 - Changed fileFilters to dynamically get listeners from
-			ImageIO#getReaderFileSuffixes and to use a lot of maps 
- * @version 2012 Sept 10 - renamed from LoadListener to SwingLoadListener
- * @version 2012 Sept 10 - changes due to change in signature of SwingSaveAndLoadListener.fileChooser
- * @version 2012 Nov 19 - making use ImageReaderSpis directly instead of indirect extension usage
- * @version 2012 Dec 27 - clears the chooser's accessory before showing it
- * @version 2013 Feb 06 - Dialog appears when an invalid file is selected
- * 
  * @param setImage a function that the listener will put the obtained image into
  */
 final class SwingLoadListener(val setImage:Function1[BufferedImage, Any]) extends ActionListener
@@ -103,12 +91,6 @@ final class SwingLoadListener(val setImage:Function1[BufferedImage, Any]) extend
  * A helper object for the [[SwingLoadListener]] and [[SwingSaveListener]]
  * classes that caches a JFileChooser - mostly so that there's some level
  * of persistence of a base directory between loads or saves. 
- * 
- * @author Raymond Dodge
- * @version 2012 Jun 19
- * @version 2012 Sept 10 - renamed from SaveAndLoadListener to SwingSaveAndLoadListener
- * @version 2012 Sept 10 - fileChooser now returns a Option[JFileChooser], rather than a JFileChooser 
- * @version 2012 Sept 10 - adding the canBeUsed method
  */
 object SwingSaveAndLoadListener
 {

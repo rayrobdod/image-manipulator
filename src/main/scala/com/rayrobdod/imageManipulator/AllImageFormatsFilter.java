@@ -37,11 +37,6 @@ import javax.imageio.ImageIO;
 
 /**
  * A singleton that create a FileFilter that matches all files readable by ImageIO
- * 
- * @author Raymond Dodge
- * @version 2012 Aug 16
- * @version 2013 Jul 24 - now capable of dealing with empty file suffixes
- * @since 1.0.1
  */
 public class AllImageFormatsFilter
 {

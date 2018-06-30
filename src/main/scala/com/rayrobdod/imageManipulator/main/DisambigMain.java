@@ -33,9 +33,6 @@ import com.rayrobdod.util.Taskbar;
  *
  * Uses [[java.lang.System.getProperty System properties]] to decide with of the other
  * main classes to call.
- * 
- * @author Raymond Dodge
- * @version 2014 Feb 01
  */
 public class DisambigMain
 {

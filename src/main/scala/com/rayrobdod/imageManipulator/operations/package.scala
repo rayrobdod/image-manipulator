@@ -41,12 +41,6 @@ package operations {
 	/**
 	 * A trait that indicates a [[java.awt.image.BufferedImageOp]] that
 	 * will not change the size of the BufferedImage or translate any pixels
-	 * 
-	 * @author Raymond Dodge
-	 * @version 2012 Jun 19
-	 * @version 2013 Jun 05 - making createCompatibleDestImage use BufferedImage's
-			(colormodel, raster, boolean, map) constructor rather than the
-			(int, int, int) constructor.
 	 */
 	trait NoResizeBufferedImageOp extends BufferedImageOp
 	{
@@ -70,10 +64,6 @@ package operations {
 	/**
 	 * A trait that defines a filter method in which a single pass
 	 * through an image is used to set pixels
-	 * 
-	 * @author Raymond Dodge
-	 * @version 2013 Feb 05
-	 * @version 2013 Jun 05 - calling createCompatibleDestImage with a non-null ColorModel
 	 * @note Seq.par exists. It can speed things up slightly noticably. However, it would be the only use
 				of parellel collections in the program. It would be a difference of at about 120KB, 
 				or nearly 28% of the program's size.

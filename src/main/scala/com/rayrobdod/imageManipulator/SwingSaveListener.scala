@@ -39,17 +39,6 @@ import scala.collection.JavaConversions.asScalaIterator
 /**
  * An actionlistener that pops up a [[JFileChooser]] and puts the image returned
  * from the function into the selected file
- * 
- * @author Raymond Dodge
- * @version 2012 Jun 18
- * @version 2012 Jun 19 - making filechooser persistent
- * @version 2012 Aug 16 - Changed fileFilters to dynamically get listeners from
-			ImageIO#getWriterFileSuffixes and to use a lot of maps 
- * @version 2012 Sept 10 - renamed from SaveListener to SwingSaveListener
- * @version 2012 Sept 10 - changes due to change in signature of SwingSaveAndLoadListener.fileChooser
- * @version 2012 Nov 19 - making use ImageWriterSpis directly instead of indirect extension usage
- * @version 2012 Dec 27 - set the chooser's accessory to a component that will modify the ImageWriteParams
- * @version 2013 Feb 24 - make accessory reflect first filefilter shown upon first showing
  */
 final class SwingSaveListener(val getImage:Function0[RenderedImage]) extends ActionListener
 {

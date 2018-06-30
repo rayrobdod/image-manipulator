@@ -37,14 +37,6 @@ import com.rayrobdod.swing.GridBagConstraintsFactory
 
 /**
  * A frame that holds the common elements of the image conversions
- * 
- * @author Raymond Dodge
- * @version 2012 Jun 18-19
- * @version 2012 Sept 09 - added 16x16 image icon to frame
- * @version 2012 Sept 10 - modified to use SaveAndLoadListeners
- * @version 2013 Feb 06 - GridBagConstraintsRemainder is now a val, not an object
- * @version 2013 Jun 05 - maked preview operations work on scaled instances
- * @version 2013 Jun 05 - private object scaleImage extends Function1 => private def scaleImage
  */
 final class ImageManipulateFrame extends JFrame
 {

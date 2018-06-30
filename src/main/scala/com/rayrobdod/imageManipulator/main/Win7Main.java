@@ -34,7 +34,6 @@ import java.util.logging.Logger;
 /**
  * A main method for the image manipulator program
  * 
- * @author Raymond Dodge
  */
 public class Win7Main
 {

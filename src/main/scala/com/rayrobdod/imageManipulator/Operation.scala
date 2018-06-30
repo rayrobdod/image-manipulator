@@ -37,10 +37,6 @@ import java.awt.image.BufferedImage
  * manipulation
  * 
  * As this is a service, an implementing class should have a 0-arg constructor.
- * @author Raymond Dodge
- * @version 2012 Jun 18
- * @version 2012 Jun 19 - renamed from Manipulations to Operations
- * @version 2012 Jun 19 - added ActionListener parameter to setup
  */
 trait Operation
 {
@@ -71,9 +67,6 @@ trait Operation
 
 /**
  * A service provider for getting Manipulations
- * @author Raymond Dodge
- * @version 2012 Jun 18
- * @version 2012 Jun 19 - renamed from Manipulations to Operations
  */
 object Operation
 {

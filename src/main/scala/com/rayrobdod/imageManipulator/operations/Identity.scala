@@ -34,10 +34,6 @@ import java.awt.image.BufferedImage
  * An identity image manipulation
  * 
  * This is the both the Operation and the ImageOp.
- * @author Raymond Dodge
- * @version 2012 Jun 18
- * @version 2012 Jun 19 - moved from com.rayrobdod.imageManipulator.manipulations to com.rayrobdod.imageManipulator.operations
- * @version 2013 Feb 05 - now using trait LocalReplacement
  */
 final class Identity extends Operation with NoResizeBufferedImageOp with LocalReplacement 
 {

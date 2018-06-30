@@ -12,11 +12,7 @@ scalaVersion := "2.11.8"
 
 crossScalaVersions ++= Seq("2.11.8")
 
-resolvers += ("rayrobdod" at "http://ivy.rayrobdod.name/")
-
-libraryDependencies += ("com.rayrobdod" %% "utilities" % "20160112")
-
-dependencyClasspath in Compile += new Attributed( new File("C:/Program Files/Java/jdk1.8.0_91/jre/lib/javaws.jar"))(AttributeMap.empty)
+dependencyClasspath in Compile += new Attributed( new File("C:/Program Files/Java/jdk1.8.0_161/jre/lib/javaws.jar"))(AttributeMap.empty)
 
 exportJars := true
 

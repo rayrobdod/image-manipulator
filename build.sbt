@@ -79,27 +79,27 @@ mappings in (Compile, packageBin) += ((baseDirectory.value / "LICENSE.txt"), "LI
 
 
 // proguard
-proguardSettings
+enablePlugins(SbtProguard)
 
 val proguardType = settingKey[String]("level of proguard compression")
 
 proguardType := "mini" // "micro"
 
-ProguardKeys.proguardVersion in Proguard := "5.2.1"
+proguardVersion in Proguard := "6.0"
 
-ProguardKeys.inputs in Proguard ~= {(x:Seq[File]) => x.dropRight(1)}
+proguardInputs in Proguard ~= {(x:Seq[File]) => x.dropRight(1)}
 
-ProguardKeys.inputFilter in Proguard := { file =>
+proguardInputFilter in Proguard := { file =>
   if (file.name.startsWith("image-manipulator"))
     None
   else
     Some("**.class")
 }
 
-ProguardKeys.options in Proguard += "-include " + ((baseDirectory in Compile).value / (proguardType.value + ".proguard"))
+proguardOptions in Proguard += "-include " + ((baseDirectory in Compile).value / (proguardType.value + ".proguard"))
 
-ProguardKeys.options in Proguard := (ProguardKeys.options in Proguard).value.map{line =>
-	if (line contains ".ivy2") {line.replaceAll("-libraryjars (.+)", "-injars $1(**.class)")} else {line}
+proguardOptions in Proguard := (proguardOptions in Proguard).value.map{line =>
+	if (line contains "scala") {line.replaceAll("-libraryjars (.+)", "-injars $1(**.class)")} else {line}
 }
 
 artifactPath in Proguard := {

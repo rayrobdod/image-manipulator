@@ -81,7 +81,9 @@ mappings in (Compile, packageBin) += ((baseDirectory.value / "LICENSE.txt"), "LI
 // proguard
 proguardSettings
 
-proguardType := "mini" 
+val proguardType = settingKey[String]("level of proguard compression")
+
+proguardType := "mini" // "micro"
 
 ProguardKeys.proguardVersion in Proguard := "5.2.1"
 
@@ -94,7 +96,13 @@ ProguardKeys.inputFilter in Proguard := { file =>
     Some("**.class")
 }
 
-artifactPath in Proguard <<= (artifactPath in Proguard, proguardType, version).apply{(orig:File, level:String, version:String) =>
-	orig.getParentFile() / ("imageManipulator-" + version + "-full-" + level + ".jar")
+ProguardKeys.options in Proguard += "-include " + ((baseDirectory in Compile).value / (proguardType.value + ".proguard"))
+
+ProguardKeys.options in Proguard := (ProguardKeys.options in Proguard).value.map{line =>
+	if (line contains ".ivy2") {line.replaceAll("-libraryjars (.+)", "-injars $1(**.class)")} else {line}
+}
+
+artifactPath in Proguard := {
+	(artifactPath in Proguard).value.getParentFile() / (s"imageManipulator-fatjar-${proguardType.value}.jar")
 }
 
